@@ -1,0 +1,6945 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <title>Pilotage opérationnel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+    defer
+  ></script>
+
+  <style>
+    :root,
+    [data-theme="light"] {
+      --bg: #fff8fb;
+      --surface: #ffffff;
+      --surface-2: #fff0f6;
+      --surface-3: #f8dce8;
+      --surface-4: #f2c9db;
+
+      --border: rgba(91, 43, 65, 0.15);
+      --divider: rgba(91, 43, 65, 0.10);
+
+      --text: #35242c;
+      --muted: #745866;
+      --faint: #987e8b;
+      --inverse: #ffffff;
+
+      --primary: #b53870;
+      --primary-hover: #922956;
+      --primary-active: #742044;
+      --primary-soft: #f7d8e5;
+
+      --success: #347553;
+      --success-soft: #deefe6;
+
+      --warning: #965b17;
+      --warning-soft: #f7ead5;
+
+      --danger: #aa3048;
+      --danger-soft: #f8dce2;
+
+      --blue: #326a98;
+      --blue-soft: #dcebf7;
+
+      --shadow-sm: 0 2px 10px rgba(91, 43, 65, 0.06);
+      --shadow-md: 0 12px 34px rgba(91, 43, 65, 0.10);
+      --shadow-lg: 0 26px 68px rgba(91, 43, 65, 0.18);
+    }
+
+    [data-theme="dark"] {
+      --bg: #1d161a;
+      --surface: #271e23;
+      --surface-2: #302329;
+      --surface-3: #3b2932;
+      --surface-4: #4a313d;
+
+      --border: rgba(255, 232, 242, 0.14);
+      --divider: rgba(255, 232, 242, 0.09);
+
+      --text: #f8eaf1;
+      --muted: #c5a8b5;
+      --faint: #987c89;
+      --inverse: #2c1721;
+
+      --primary: #e78eb5;
+      --primary-hover: #f2a5c6;
+      --primary-active: #fac2da;
+      --primary-soft: #523044;
+
+      --success: #80c09a;
+      --success-soft: #263d31;
+
+      --warning: #dfaa65;
+      --warning-soft: #483621;
+
+      --danger: #ed8799;
+      --danger-soft: #4c2830;
+
+      --blue: #89b7de;
+      --blue-soft: #263847;
+
+      --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.18);
+      --shadow-md: 0 12px 34px rgba(0, 0, 0, 0.28);
+      --shadow-lg: 0 26px 68px rgba(0, 0, 0, 0.40);
+    }
+
+    :root {
+      --font: "DM Sans", sans-serif;
+
+      --text-xs: clamp(0.75rem, 0.72rem + 0.12vw, 0.84rem);
+      --text-sm: clamp(0.875rem, 0.83rem + 0.18vw, 0.98rem);
+      --text-base: clamp(1rem, 0.96rem + 0.18vw, 1.08rem);
+      --text-lg: clamp(1.15rem, 1.04rem + 0.42vw, 1.4rem);
+      --text-xl: clamp(1.55rem, 1.25rem + 1vw, 2.15rem);
+
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+
+      --radius-sm: 0.4rem;
+      --radius-md: 0.62rem;
+      --radius-lg: 0.9rem;
+      --radius-xl: 1.15rem;
+      --radius-full: 999px;
+
+      --sidebar-width: 286px;
+      --topbar-height: 72px;
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: none;
+      text-size-adjust: none;
+    }
+
+    body {
+      min-height: 100dvh;
+      overflow: hidden;
+      color: var(--text);
+      background: var(--bg);
+      font-family: var(--font);
+      font-size: var(--text-base);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      color: inherit;
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button,
+    input,
+    select,
+    textarea,
+    a {
+      transition:
+        color var(--transition),
+        background-color var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition),
+        transform var(--transition);
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    a:focus-visible {
+      outline: 3px solid color-mix(
+        in srgb,
+        var(--primary) 30%,
+        transparent
+      );
+      outline-offset: 2px;
+    }
+
+    img,
+    svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: -100px;
+      left: var(--space-4);
+      z-index: 1000;
+      padding: var(--space-3) var(--space-4);
+      color: white;
+      background: var(--primary);
+      border-radius: var(--radius-md);
+    }
+
+    .skip-link:focus {
+      top: var(--space-3);
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      grid-template-rows: var(--topbar-height) minmax(0, 1fr);
+      height: 100dvh;
+    }
+
+    .topbar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+      min-width: 0;
+      padding-inline: var(--space-5);
+      background: color-mix(
+        in srgb,
+        var(--surface) 96%,
+        transparent
+      );
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(14px);
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      min-width: calc(var(--sidebar-width) - var(--space-5));
+    }
+
+    .logo {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-radius: var(--radius-lg);
+    }
+
+    .logo svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .brand-title {
+      display: block;
+      font-size: var(--text-base);
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .brand-subtitle {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: var(--text-xs);
+    }
+
+    .global-search {
+      position: relative;
+      flex: 1;
+      max-width: 680px;
+    }
+
+    .global-search input {
+      width: 100%;
+      height: 44px;
+      padding:
+        0
+        48px
+        0
+        var(--space-4);
+      color: var(--text);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .global-search input:focus {
+      background: var(--surface);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px color-mix(
+        in srgb,
+        var(--primary) 12%,
+        transparent
+      );
+    }
+
+    .search-icon {
+      position: absolute;
+      top: 50%;
+      right: var(--space-4);
+      color: var(--muted);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-left: auto;
+    }
+
+    .save-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--muted);
+      font-size: var(--text-xs);
+      white-space: nowrap;
+    }
+
+    .save-indicator::before {
+      width: 8px;
+      height: 8px;
+      content: "";
+      background: var(--success);
+      border-radius: 50%;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      min-height: 42px;
+      padding: var(--space-2) var(--space-4);
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .button:hover {
+      background: var(--surface-2);
+      border-color: color-mix(
+        in srgb,
+        var(--primary) 38%,
+        var(--border)
+      );
+      transform: translateY(-1px);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button.primary {
+      color: white;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .button.primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .button.success {
+      color: white;
+      background: var(--success);
+      border-color: var(--success);
+    }
+
+    .button.danger {
+      color: var(--danger);
+      background: var(--danger-soft);
+      border-color: transparent;
+    }
+
+    .button.ghost {
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .button.small {
+      min-height: 34px;
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--text-xs);
+    }
+
+    .icon-button {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .icon-button:hover {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .sidebar {
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--space-5) var(--space-3);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      scrollbar-width: thin;
+    }
+
+    .nav-title {
+      margin:
+        var(--space-5)
+        var(--space-3)
+        var(--space-2);
+      color: var(--faint);
+      font-size: var(--text-xs);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-title:first-child {
+      margin-top: 0;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: var(--space-1);
+      list-style: none;
+    }
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 44px;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      color: var(--muted);
+      background: transparent;
+      border: 0;
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      font-weight: 650;
+      text-align: left;
+    }
+
+    .nav-button:hover {
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    .nav-button.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .nav-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      font-size: 17px;
+    }
+
+    .nav-count {
+      min-width: 24px;
+      margin-left: auto;
+      padding: 2px 7px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .company-card {
+      margin-top: var(--space-6);
+      padding: var(--space-4);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+
+    .company-card strong {
+      display: block;
+      margin-bottom: var(--space-1);
+      font-size: var(--text-sm);
+    }
+
+    .company-card p {
+      color: var(--muted);
+      font-size: var(--text-xs);
+    }
+
+    .main-content {
+      min-width: 0;
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--space-6);
+      scroll-behavior: smooth;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1680px;
+      margin-inline: auto;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+
+    .page-title {
+      margin-bottom: var(--space-2);
+      font-size: var(--text-xl);
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+    }
+
+    .page-description {
+      max-width: 72ch;
+      color: var(--muted);
+      font-size: var(--text-sm);
+    }
+
+    .page-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: var(--space-2);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .kpi-card {
+      min-height: 128px;
+      padding: var(--space-5);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: var(--text-sm);
+      font-weight: 700;
+    }
+
+    .kpi-value {
+      margin: var(--space-3) 0 var(--space-1);
+      font-size: clamp(1.8rem, 2.5vw, 2.6rem);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.045em;
+    }
+
+    .kpi-hint {
+      color: var(--faint);
+      font-size: var(--text-xs);
+    }
+
+    .kpi-card.danger .kpi-value {
+      color: var(--danger);
+    }
+
+    .kpi-card.warning .kpi-value {
+      color: var(--warning);
+    }
+
+    .kpi-card.success .kpi-value {
+      color: var(--success);
+    }
+
+    .panel {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      min-height: 62px;
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .panel-title {
+      font-size: var(--text-lg);
+      font-weight: 800;
+    }
+
+    .panel-body {
+      padding: var(--space-5);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1.35fr)
+        minmax(320px, 0.65fr);
+      gap: var(--space-5);
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      padding: var(--space-3);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      min-height: 40px;
+      padding: var(--space-2) var(--space-3);
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .filter-bar input {
+      min-width: 220px;
+      flex: 1;
+    }
+
+    .tabs {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      overflow-x: auto;
+      padding-bottom: var(--space-1);
+      scrollbar-width: thin;
+    }
+
+    .tab-button {
+      min-height: 40px;
+      padding: var(--space-2) var(--space-4);
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-size: var(--text-sm);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tab-button.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-color: transparent;
+    }
+
+    .table-card {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 960px;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: var(--space-3) var(--space-4);
+      color: var(--muted);
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      font-size: var(--text-xs);
+      font-weight: 800;
+      letter-spacing: 0.035em;
+      text-align: left;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--divider);
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: color-mix(
+        in srgb,
+        var(--primary-soft) 50%,
+        transparent
+      );
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 25px;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .badge.primary {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .badge.success {
+      color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .badge.warning {
+      color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .badge.danger {
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .badge.blue {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .row-actions {
+      display: flex;
+      gap: var(--space-1);
+      white-space: nowrap;
+    }
+
+    .action-button {
+      min-height: 34px;
+      padding: var(--space-1) var(--space-2);
+      color: var(--primary);
+      background: transparent;
+      border: 0;
+      border-radius: var(--radius-sm);
+      font-size: var(--text-xs);
+      font-weight: 750;
+    }
+
+    .action-button:hover {
+      background: var(--primary-soft);
+    }
+
+    .action-button.delete {
+      color: var(--danger);
+    }
+
+    .action-button.delete:hover {
+      background: var(--danger-soft);
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-12) var(--space-6);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .empty-state strong {
+      margin-bottom: var(--space-2);
+      color: var(--text);
+      font-size: var(--text-lg);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-5);
+      background: rgba(33, 18, 25, 0.62);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(980px, 100%);
+      max-height: calc(100dvh - 40px);
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: var(--text-lg);
+      font-weight: 800;
+    }
+
+    .modal-body {
+      padding: var(--space-5);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: var(--text-sm);
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: var(--space-2) var(--space-3);
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .field textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px color-mix(
+        in srgb,
+        var(--primary) 12%,
+        transparent
+      );
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-2);
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--divider);
+    }
+
+    .toast {
+      position: fixed;
+      right: var(--space-5);
+      bottom: var(--space-5);
+      z-index: 700;
+      max-width: 390px;
+      padding: var(--space-3) var(--space-4);
+      color: white;
+      background: #4b2939;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mobile-menu,
+    .floating-add {
+      display: none;
+    }
+
+    @media (max-width: 1180px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      body {
+        overflow: auto;
+      }
+
+      .app-shell {
+        display: block;
+        height: auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        min-height: 68px;
+        padding: var(--space-2) var(--space-3);
+      }
+
+      .brand {
+        min-width: 0;
+      }
+
+      .brand-subtitle,
+      .global-search,
+      .save-indicator,
+      .desktop-only {
+        display: none;
+      }
+
+      .mobile-menu {
+        display: inline-grid;
+      }
+
+      .sidebar {
+        position: fixed;
+        inset: 68px auto 0 0;
+        z-index: 200;
+        width: min(310px, 88vw);
+        transform: translateX(-105%);
+        box-shadow: var(--shadow-lg);
+        transition: transform 220ms ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        min-height: calc(100dvh - 68px);
+        overflow: visible;
+        padding: var(--space-4) var(--space-3) 90px;
+      }
+
+      .page-header {
+        display: block;
+      }
+
+      .page-actions {
+        justify-content: flex-start;
+        margin-top: var(--space-4);
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .floating-add {
+        position: fixed;
+        right: var(--space-4);
+        bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
+        z-index: 100;
+        display: inline-flex;
+        min-width: 56px;
+        min-height: 56px;
+        padding: 0 var(--space-4);
+        color: white;
+        background: var(--primary);
+        border: 0;
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-lg);
+        font-weight: 800;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar input,
+      .filter-bar select {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .modal-backdrop {
+        padding: 0;
+      }
+
+      .modal {
+        width: 100%;
+        min-height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+      }
+    }
+
+    @media print {
+      body {
+        overflow: visible;
+        color: #222;
+        background: white;
+      }
+
+      .topbar,
+      .sidebar,
+      .page-actions,
+      .filter-bar,
+      .floating-add,
+      .row-actions,
+      .toast {
+        display: none !important;
+      }
+
+      .app-shell {
+        display: block;
+        height: auto;
+      }
+
+      .main-content {
+        overflow: visible;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#mainContent">
+    Aller au contenu
+  </a>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <button
+        id="mobileMenuButton"
+        class="icon-button mobile-menu"
+        type="button"
+        aria-label="Ouvrir le menu"
+      >
+        ☰
+      </button>
+
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <path
+              d="M8 36L18 13L24 27L31 17L40 36H8Z"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M14 36H36"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+            <circle
+              cx="35"
+              cy="12"
+              r="4"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+          </svg>
+        </div>
+
+        <div>
+          <strong class="brand-title" id="brandTitle">
+            Pilotage opérationnel
+          </strong>
+
+          <small class="brand-subtitle">
+            Coordination SMMIM & YDM
+          </small>
+        </div>
+      </div>
+
+      <label class="global-search">
+        <span class="sr-only">Recherche générale</span>
+
+        <input
+          id="globalSearch"
+          type="search"
+          placeholder="Rechercher tâche, lot, camion, expédition, document..."
+        >
+
+        <span class="search-icon">⌕</span>
+      </label>
+
+      <div class="topbar-actions">
+        <span class="save-indicator" id="saveIndicator">
+          Prêt
+        </span>
+
+        <button
+          class="icon-button"
+          id="themeButton"
+          type="button"
+          aria-label="Changer le thème"
+        >
+          ◐
+        </button>
+
+        <button
+          class="button primary desktop-only"
+          id="quickAddButton"
+          type="button"
+        >
+          ＋ Ajouter
+        </button>
+      </div>
+    </header>
+
+    <aside
+      class="sidebar"
+      id="sidebar"
+      aria-label="Navigation principale"
+    >
+      <p class="nav-title">Pilotage</p>
+
+      <ul class="nav-list">
+        <li>
+          <button
+            class="nav-button active"
+            data-view="dashboard"
+            type="button"
+          >
+            <span class="nav-icon">◎</span>
+            Tour de contrôle 360°
+          </button>
+        </li>
+
+        <li>
+          <button
+            class="nav-button"
+            data-view="tasks"
+            type="button"
+          >
+            <span class="nav-icon">✓</span>
+            Tâches & rappels avancés
+            <span class="nav-count" id="taskCount">0</span>
+          </button>
+        </li>
+      </ul>
+
+      <p class="nav-title">Opérations</p>
+
+      <ul class="nav-list">
+        <li>
+          <button class="nav-button" data-view="admin" type="button">
+            <span class="nav-icon">▧</span>
+            Administratif
+          </button>
+        </li>
+
+        <li>
+          <button class="nav-button" data-view="expenses" type="button">
+            <span class="nav-icon">₣</span>
+            Dépenses sur projet
+          </button>
+        </li>
+
+        <li>
+          <button class="nav-button" data-view="stock" type="button">
+            <span class="nav-icon">▣</span>
+            Stock & lots
+          </button>
+        </li>
+
+        <li>
+          <button class="nav-button" data-view="road" type="button">
+            <span class="nav-icon">⇄</span>
+            Transport routier
+          </button>
+        </li>
+
+        <li>
+          <button
+            class="nav-button"
+            data-view="shipments"
+            type="button"
+          >
+            <span class="nav-icon">◫</span>
+            Expéditions
+          </button>
+        </li>
+
+        <li>
+          <button
+            class="nav-button"
+            data-view="exportdocs"
+            type="button"
+          >
+            <span class="nav-icon">▤</span>
+            Documents export
+          </button>
+        </li>
+
+        <li>
+          <button class="nav-button" data-view="contacts" type="button">
+            <span class="nav-icon">◎</span>
+            Contacts
+          </button>
+        </li>
+      </ul>
+
+      <p class="nav-title">Personnalisation</p>
+
+      <ul class="nav-list" id="customNavigation"></ul>
+
+      <ul class="nav-list">
+        <li>
+          <button
+            class="nav-button"
+            data-view="settings"
+            type="button"
+          >
+            <span class="nav-icon">⚙</span>
+            Paramètres & volets
+          </button>
+        </li>
+      </ul>
+
+      <div class="company-card">
+        <strong id="sidebarCompany">SMMIM</strong>
+
+        <p id="sidebarRoute">
+          Tarseft → Chez Freshways → Port
+        </p>
+      </div>
+    </aside>
+
+    <main
+      class="main-content"
+      id="mainContent"
+      tabindex="-1"
+    >
+      <div class="page" id="app"></div>
+    </main>
+  </div>
+
+  <button
+    class="floating-add"
+    id="floatingAddButton"
+    type="button"
+  >
+    ＋ Ajouter
+  </button>
+
+  <div
+    class="modal-backdrop"
+    id="editorBackdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="editorTitle"
+  >
+    <section class="modal">
+      <header class="modal-header">
+        <h2 class="modal-title" id="editorTitle">
+          Ajouter
+        </h2>
+
+        <button
+          class="icon-button"
+          id="closeEditorButton"
+          type="button"
+          aria-label="Fermer"
+        >
+          ×
+        </button>
+      </header>
+
+      <form class="modal-body" id="editorForm">
+        <div class="form-grid" id="editorFields"></div>
+
+        <div class="form-actions">
+          <button
+            class="button"
+            id="cancelEditorButton"
+            type="button"
+          >
+            Annuler
+          </button>
+
+          <button class="button primary" type="submit">
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <input
+    id="attachmentInput"
+    type="file"
+    accept=".pdf,.xlsx,.xls,.csv,.doc,.docx,.txt,image/*"
+    multiple
+    hidden
+  >
+
+  <input
+    id="cameraInput"
+    type="file"
+    accept="image/*"
+    capture="environment"
+    hidden
+  >
+
+  <input
+    id="jsonImportInput"
+    type="file"
+    accept=".json,application/json"
+    hidden
+  >
+
+  <input
+    id="excelImportInput"
+    type="file"
+    accept=".xlsx,.xls,.csv"
+    hidden
+  >
+
+  <div
+    class="toast"
+    id="toast"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+  <script>
+    "use strict";
+
+    /*
+      PARTIE 2/3 À COLLER IMMÉDIATEMENT ICI
+      Ne pas fermer la balise <script>.
+    */    const DB_NAME = "pilotage-operationnel-db";
+    const DB_VERSION = 1;
+    const STATE_KEY = "pilotage-state";
+
+    const DEFAULT_SETTINGS = {
+      appName: "Pilotage opérationnel",
+      smmimName: "SMMIM",
+      ydmName: "YDM",
+      mine: "Tarseft",
+      depot: "Chez Freshways",
+      port: "Port à définir",
+      currency: "MAD",
+      theme: "light"
+    };
+
+    const TASK_STATUSES = [
+      "Brouillon",
+      "À faire",
+      "En cours",
+      "En attente",
+      "Bloquée",
+      "Reportée",
+      "Terminée",
+      "Annulée"
+    ];
+
+    const TASK_PRIORITIES = [
+      "Basse",
+      "Normale",
+      "Haute",
+      "Urgente",
+      "Critique"
+    ];
+
+    const COMPANY_OPTIONS = [
+      "SMMIM",
+      "YDM",
+      "Personnel",
+      "Autre"
+    ];
+
+    const MODULES = {
+      tasks: {
+        title: "Tâches & rappels avancés",
+        singular: "une tâche",
+        description:
+          "Priorités, rappels, délégation, récurrence, progression et historique.",
+        fields: [
+          {
+            name: "title",
+            label: "Titre de la tâche",
+            type: "text",
+            required: true,
+            full: true
+          },
+          {
+            name: "description",
+            label: "Description détaillée",
+            type: "textarea",
+            full: true
+          },
+          {
+            name: "company",
+            label: "Société / Domaine",
+            type: "select",
+            options: COMPANY_OPTIONS,
+            required: true
+          },
+          {
+            name: "project",
+            label: "Projet / Chantier / Expédition",
+            type: "text"
+          },
+          {
+            name: "category",
+            label: "Catégorie",
+            type: "select",
+            options: [
+              "Administration",
+              "Mine",
+              "Transport routier",
+              "Stock",
+              "Expédition",
+              "Export",
+              "Permis",
+              "Laboratoire",
+              "Comptabilité",
+              "Réunion",
+              "Personnel",
+              "Autre"
+            ]
+          },
+          {
+            name: "priority",
+            label: "Priorité",
+            type: "select",
+            options: TASK_PRIORITIES,
+            default: "Normale"
+          },
+          {
+            name: "status",
+            label: "Statut",
+            type: "select",
+            options: TASK_STATUSES,
+            default: "À faire"
+          },
+          {
+            name: "startDate",
+            label: "Date de début",
+            type: "date"
+          },
+          {
+            name: "dueDate",
+            label: "Date d’échéance",
+            type: "date"
+          },
+          {
+            name: "reminder",
+            label: "Date et heure du rappel",
+            type: "datetime-local"
+          },
+          {
+            name: "owner",
+            label: "Responsable principal",
+            type: "text"
+          },
+          {
+            name: "assignedTo",
+            label: "Personne(s) associée(s)",
+            type: "text"
+          },
+          {
+            name: "progress",
+            label: "Avancement en %",
+            type: "number",
+            min: "0",
+            max: "100",
+            default: 0
+          },
+          {
+            name: "recurrence",
+            label: "Récurrence",
+            type: "select",
+            options: [
+              "Aucune",
+              "Quotidienne",
+              "Hebdomadaire",
+              "Mensuelle",
+              "Trimestrielle",
+              "Annuelle"
+            ],
+            default: "Aucune"
+          },
+          {
+            name: "waitingFor",
+            label: "En attente de",
+            type: "text"
+          },
+          {
+            name: "blocker",
+            label: "Motif du blocage",
+            type: "text"
+          },
+          {
+            name: "nextAction",
+            label: "Prochaine action",
+            type: "text",
+            full: true
+          },
+          {
+            name: "checklist",
+            label: "Checklist — une ligne par sous-tâche",
+            type: "textarea",
+            full: true
+          },
+          {
+            name: "private",
+            label: "Tâche privée",
+            type: "checkbox"
+          },
+          {
+            name: "favorite",
+            label: "Tâche favorite",
+            type: "checkbox"
+          },
+          {
+            name: "notes",
+            label: "Notes et commentaires",
+            type: "textarea",
+            full: true
+          }
+        ],
+        columns: [
+          { key: "title", label: "Tâche" },
+          { key: "company", label: "Domaine" },
+          { key: "owner", label: "Responsable" },
+          { key: "dueDate", label: "Échéance" },
+          { key: "priority", label: "Priorité" },
+          { key: "status", label: "Statut" },
+          { key: "progress", label: "Avancement" },
+          { key: "attachments", label: "Pièces" }
+        ]
+      },
+
+      admin: {
+        title: "Administratif",
+        singular: "un dossier administratif",
+        description:
+          "Permis, programmes de travaux, courriers, dépôts et échéances.",
+        fields: [
+          {
+            name: "title",
+            label: "Intitulé du dossier",
+            type: "text",
+            required: true,
+            full: true
+          },
+          {
+            name: "company",
+            label: "Société",
+            type: "select",
+            options: ["SMMIM", "YDM", "Autre"],
+            required: true
+          },
+          {
+            name: "type",
+            label: "Type de dossier",
+            type: "select",
+            options: [
+              "Permis de recherche",
+              "Programme de travaux",
+              "Renouvellement",
+              "Courrier",
+              "Autorisation",
+              "Contrat",
+              "Réunion",
+              "Dossier fiscal",
+              "Dossier social",
+              "Autre"
+            ]
+          },
+          {
+            name: "reference",
+            label: "Référence",
+            type: "text"
+          },
+          {
+            name: "authority",
+            label: "Administration / Interlocuteur",
+            type: "text"
+          },
+          {
+            name: "region",
+            label: "Région / Province",
+            type: "text"
+          },
+          {
+            name: "depositDate",
+            label: "Date de dépôt",
+            type: "date"
+          },
+          {
+            name: "deadline",
+            label: "Prochaine échéance",
+            type: "date"
+          },
+          {
+            name: "status",
+            label: "Statut",
+            type: "select",
+            options: [
+              "À préparer",
+              "En préparation",
+              "Déposé",
+              "En instruction",
+              "Complément demandé",
+              "Accordé",
+              "Renouvellement",
+              "Refusé",
+              "Expiré",
+              "Archivé"
+            ]
+          },
+          {
+            name: "owner",
+            label: "Responsable",
+            type: "text"
+          },
+          {
+            name: "missing",
+            label: "Pièces manquantes",
+            type: "textarea",
+            full: true
+          },
+          {
+            name: "workProgram",
+            label: "Programme de travaux / Détails",
+            type: "textarea",
+            full: true
+          },
+          {
+            name: "notes",
+            label: "Observations",
+            type: "textarea",
+            full: true
+          }
+        ],
+        columns: [
+          { key: "title", label: "Dossier" },
+          { key: "company", label: "Société" },
+          { key: "type", label: "Type" },
+          { key: "reference", label: "Référence" },
+          { key: "deadline", label: "Échéance" },
+          { key: "status", label: "Statut" },
+          { key: "owner", label: "Responsable" },
+          { key: "attachments", label: "Pièces" }
+        ]
+      },
+
+      expenses: {
+        title: "Dépenses sur projet",
+        singular: "un mouvement financier",
+        description:
+          "Montants reçus, dépenses, bénéficiaires, justificatifs et solde par projet.",
+        fields: [
+          {
+            name: "company",
+            label: "Société",
+            type: "select",
+            options: ["SMMIM", "YDM", "Autre"],
+            required: true
+          },
+          {
+            name: "project",
+            label: "Projet / Chantier / Expédition",
+            type: "text",
+            required: true
+          },
+          {
+            name: "movement",
+            label: "Type de mouvement",
+            type: "select",
+            options: ["Montant reçu", "Montant dépensé"],
+            required: true
+          },
+          {
+            name: "date",
+            label: "Date",
+            type: "date",
+            required: true
+          },
+          {
+            name: "amount",
+            label: "Montant",
+            type: "number",
+            step: "0.01",
+            required: true
+          },
+          {
+            name: "currency",
+            label: "Devise",
+            type: "select",
+            options: ["MAD", "USD", "EUR", "CNY"],
+            default: "MAD"
+          },
+          {
+            name: "beneficiary",
+            label: "Bénéficiaire / Provenance",
+            type: "text"
+          },
+          {
+            name: "label",
+            label: "Libellé / Motif",
+            type: "text",
+            required: true,
+            full: true
+          },
+          {
+            name: "paymentMethod",
+            label: "Mode de paiement",
+            type: "select",
+            options: [
+              "Espèces",
+              "Virement",
+              "Chèque",
+              "Carte",
+              "Avance",
+              "Autre"
+            ]
+          },
+          {
+            name: "reference",
+            label: "Référence / Numéro de pièce",
+            type: "text"
+          },
+          {
+            name: "justified",
+            label: "Justificatif disponible",
+            type: "checkbox"
+          },
+          {
+            name: "notes",
+            label: "Observations",
+            type: "textarea",
+            full: true
+          }
+        ],
+        columns: [
+          { key: "date", label: "Date" },
+          { key: "project", label: "Projet" },
+          { key: "movement", label: "Mouvement" },
+          { key: "amount", label: "Montant" },
+          { key: "beneficiary", label: "Bénéficiaire" },
+          { key: "label", label: "Libellé" },
+          { key: "justified", label: "Justificatif" },
+          { key: "attachments", label: "Pièces" }
+        ]
+      },
+
+      stock: {
+        title: "Stock & lots",
+        singular: "un mouvement de stock",
+        description:
+          "Entrées, sorties, ajustements, lots et stock disponible Chez Freshways.",
+        fields: [
+          {
+            name: "reference",
+            label: "Référence du mouvement",
+            type: "text",
+            required: true
+          },
+          {
+            name: "company",
+            label: "Société",
+            type: "select",
+            options: ["SMMIM", "YDM"],
+            required: true
+          },
+          {
+            name: "lot",
+            label: "Numéro de lot",
+            type: "text"
+          },
+          {
+            name: "date",
+            label: "Date",
+            type: "date",
+            required: true
+          },
+          {
+            name: "movement",
+            label: "Mouvement",
+            type: "select",
+            options: ["Entrée", "Sortie", "Ajustement positif", "Ajustement négatif"],
+            required: true
+          },
+          {
+            name: "mineral",
+            label: "Produit / Minerai",
+            type: "text"
+          },
+          {
+            name: "quantity",
+            label: "Quantité en tonnes",
+            type: "number",
+            step: "0.001",
+            required: true
+          },
+          {
+            name: "origin",
+            label: "Origine",
+            type: "text",
+            default: "Tarseft"
+          },
+          {
+            name: "location",
+            label: "Emplacement",
+            type: "text",
+            default: "Chez Freshways"
+          },
+          {
+            name: "shipmentRef",
+            label: "Référence expédition liée",
+            type: "text"
+          },
+          {
+            name: "status",
+            label: "Statut",
+            type: "select",
+            options: ["Confirmé", "Provisoire", "À vérifier", "Annulé"]
+          },
+          {
+            name: "notes",
+            label: "Observations",
+            type: "textarea",
+            full: true
+          }
+        ],
+        columns: [
+          { key: "date", label: "Date" },
+          { key: "reference", label: "Référence" },
+          { key: "lot", label: "Lot" },
+          { key: "movement", label: "Mouvement" },
+          { key: "mineral", label: "Produit" },
+          { key: "quantity", label: "Quantité" },
+          { key: "location", label: "Dépôt" },
+          { key: "status", label: "Statut" }
+        ]
+      },
+
+      road: {
+        title: "Transport routier",
+        singular: "une rotation routière",
+        description:
+          "Camions, chauffeurs, pesées, trajets, bons de livraison et coûts.",
+        fields: [
+          {
+            name: "reference",
+            label: "Référence / Bon de transport",
+            type: "text",
+            required: true
+          },
+          {
+            name: "shipmentRef",
+            label: "Référence expédition",
+            type: "text"
+          },
+          {
+            name: "company",
+            label: "Société",
+            type: "select",
+            options: ["SMMIM", "YDM"],
+            required: true
+          },
+          {
+            name: "date",
+            label: "Date",
+            type: "date",
+            required: true
+          },
+          {
+            name: "vehicle",
+            label: "Immatriculation",
+            type: "text"
+          },
+          {
+            name: "driver",
+            label: "Chauffeur",
+            type: "text"
+          },
+          {
+            name: "transporter",
+            label: "Transporteur",
+            type: "text"
+          },
+          {
+            name: "origin",
+            label: "Origine",
+            type: "text",
+            default: "Tarseft"
+          },
+          {
+            name: "destination",
+            label: "Destination",
+            type: "text",
+            default: "Chez Freshways"
+          },
+          {
+            name: "grossWeight",
+            label: "Poids brut — tonnes",
+            type: "number",
+            step: "0.001"
+          },
+          {
+            name: "tareWeight",
+            label: "Tare — tonnes",
+            type: "number",
+            step: "0.001"
+          },
+          {
+            name: "roadCost",
+            label: "Coût transport routier",
+            type: "number",
+            step: "0.01"
+          },
+          {
+            name: "currency",
+            label: "Devise",
+            type: "select",
+            options: ["MAD", "USD", "EUR"],
+            default: "MAD"
+          },
+          {
+            name: "status",
+            label: "Statut",
+            type: "select",
+            options: [
+              "Planifié",
+              "Chargement",
+              "En route",
+              "Livré",
+              "Bloqué",
+              "Annulé"
+            ]
+          },
+          {
+            name: "notes",
+            label: "Observations",
+            type: "textarea",
+            full: true
+          }
+        ],
+        columns: [
+          { key: "date", label: "Date" },
+          { key: "reference", label: "Bon" },
+          { key: "vehicle", label: "Camion" },
+          { key: "driver", label: "Chauffeur" },
+          { key: "route", label: "Trajet" },
+          { key: "netWeight", label: "Poids net" },
+          { key: "roadCost", label: "Coût" },
+          { key: "status", label: "Statut" }
+        ]
+      },
+
+      shipments: {
+        title: "Expéditions",
+        singular: "une expédition",
+        description:
+          "Conteneurs, tonnage expédié, navire, port et coût logistique par tonne.",
+        fields: [
+          {
+            name: "reference",
+            label: "Référence expédition",
+            type: "text",
+            required: true
+          },
+          {
+            name: "company",
+            label: "Société",
+            type: "select",
+            options: ["SMMIM", "YDM"],
+            required: true
+          },
+          {
+            name: "lot",
+            label: "Lot exporté",
+            type: "text"
+          },
+          {
+            name: "date",
+            label: "Date d’expédition",
+            type: "date"
+          },
+          {
+            name: "containers",
+            label: "Numéro(s) de conteneur",
+            type: "textarea",
+            full: true
+          },
+          {
+            name: "seals",
+            label: "Numéro(s) de plomb",
+            type: "textarea",
+            full: true
+          },
+          {
+            name: "booking",
+            label: "Booking",
+            type: "text"
+          },
+          {
+            name: "port",
+            label: "Port",
+            type: "text"
+          },
+          {
+            name: "vessel",
+            label: "Navire",
+            type: "text"
+          },
+          {
+            name: "shippedTonnage",
+            label: "Tonnage réellement expédié",
+            type: "number",
+            step: "0.001",
+            required: true
+          },
+          {
+            name: "roadInvoice",
+            label: "Facture transport routier",
+            type: "number",
+            step: "0.01"
+          },
+          {
+            name: "forwarderInvoice",
+            label: "Facture Freight Forwarder",
+            type: "number",
+            step: "0.01"
+          },
+          {
+            name: "laboratoryInvoice",
+            label: "Facture laboratoire",
+            type: "number",
+            step: "0.01"
+          },
+          {
+            name: "currency",
+            label: "Devise des coûts",
+            type: "select",
+            options: ["MAD", "USD", "EUR", "CNY"],
+            default: "MAD"
+          },
+          {
+            name: "cutoff",
+            label: "Cut-off / Échéance",
+            type: "date"
+          },
+          {
+            name: "status",
+            label: "Statut",
+            type: "select",
+            options: [
+              "Préparation",
+              "Empotage",
+              "Vers le port",
+              "Au port",
+              "Embarqué",
+              "Parti",
+              "Livré",
+              "Bloqué"
+            ]
+          },
+          {
+            name: "notes",
+            label: "Observations",
+            type: "textarea",
+            full: true
+          }
+        ],
+        columns: [
+          { key: "reference", label: "Expédition" },
+          { key: "lot", label: "Lot" },
+          { key: "shippedTonnage", label: "Tonnage expédié" },
+          { key: "roadInvoice", label: "Routier" },
+          { key: "forwarderInvoice", label: "Forwarder" },
+          { key: "laboratoryInvoice", label: "Laboratoire" },
+          { key: "logisticsTotal", label: "Total logistique" },
+          { key: "costPerTonne", label: "Coût / tonne" },
+          { key: "status", label: "Statut" }
+        ]
+      },
+
+      exportdocs: {
+        title: "Documents export",
+        singular: "un document export",
+        description:
+          "Checklist documentaire, références, échéances et documents manquants.",
+        fields: [
+          {
+            name: "title",
+            label: "Nom du document",
+            type: "text",
+            required: true,
+            full: true
+          },
+          {
+            name: "shipmentRef",
+            label: "Référence expédition",
+            type: "text"
+          },
+          {
+            name: "company",
+            label: "Société",
+            type: "select",
+            options: ["SMMIM", "YDM"],
+            required: true
+          },
+          {
+            name: "category",
+            label: "Catégorie",
+            type: "select",
+            options: [
+              "Facture commerciale",
+              "Packing list",
+              "Certificat d’origine",
+              "Certificat d’analyse",
+              "Déclaration douanière",
+              "Connaissement",
+              "VGM",
+              "Bon d’empotage",
+              "Autorisation export",
+              "Autre"
+            ]
+          },
+          {
+            name: "reference",
+            label: "Référence",
+            type: "text"
+          },
+          {
+            name: "deadline",
+            label: "Échéance",
+            type: "date"
+          },
+          {
+            name: "owner",
+            label: "Responsable",
+            type: "text"
+          },
+          {
+            name: "status",
+            label: "Statut",
+            type: "select",
+            options: [
+              "À préparer",
+              "Disponible",
+              "À signer",
+              "Envoyé",
+              "Validé",
+              "Manquant",
+              "Expiré",
+              "Archivé"
+            ]
+          },
+          {
+            name: "notes",
+            label: "Observations",
+            type: "textarea",
+            full: true
+          }
+        ],
+        columns: [
+          { key: "title", label: "Document" },
+          { key: "shipmentRef", label: "Expédition" },
+          { key: "category", label: "Catégorie" },
+          { key: "reference", label: "Référence" },
+          { key: "deadline", label: "Échéance" },
+          { key: "owner", label: "Responsable" },
+          { key: "status", label: "Statut" },
+          { key: "attachments", label: "Pièces" }
+        ]
+      },
+
+      contacts: {
+        title: "Contacts",
+        singular: "un contact",
+        description:
+          "Intervenants, fournisseurs, partenaires et coordonnées professionnelles.",
+        fields: [
+          {
+            name: "name",
+            label: "Nom / Société",
+            type: "text",
+            required: true,
+            full: true
+          },
+          {
+            name: "linkedCompany",
+            label: "Rattaché à",
+            type: "select",
+            options: ["SMMIM", "YDM", "Les deux", "Externe"]
+          },
+          {
+            name: "category",
+            label: "Catégorie",
+            type: "select",
+            options: [
+              "Géologue",
+              "Laboratoire",
+              "Transporteur",
+              "Freight Forwarder",
+              "Transitaire",
+              "Comptable",
+              "Administration",
+              "Fournisseur",
+              "Client",
+              "Partenaire",
+              "Autre"
+            ]
+          },
+          {
+            name: "role",
+            label: "Fonction",
+            type: "text"
+          },
+          {
+            name: "phone",
+            label: "Téléphone",
+            type: "tel"
+          },
+          {
+            name: "email",
+            label: "E-mail",
+            type: "email"
+          },
+          {
+            name: "city",
+            label: "Ville",
+            type: "text"
+          },
+          {
+            name: "notes",
+            label: "Notes",
+            type: "textarea",
+            full: true
+          }
+        ],
+        columns: [
+          { key: "name", label: "Contact" },
+          { key: "linkedCompany", label: "Rattaché à" },
+          { key: "category", label: "Catégorie" },
+          { key: "role", label: "Fonction" },
+          { key: "phone", label: "Téléphone" },
+          { key: "email", label: "E-mail" },
+          { key: "city", label: "Ville" }
+        ]
+      }
+    };
+
+    const BUILTIN_VIEWS = [
+      "dashboard",
+      "tasks",
+      "admin",
+      "expenses",
+      "stock",
+      "road",
+      "shipments",
+      "exportdocs",
+      "contacts",
+      "settings"
+    ];
+
+    const DEFAULT_STATE = {
+      version: 3,
+
+      settings: {
+        appName: "Pilotage opérationnel",
+        smmimName: "SMMIM",
+        ydmName: "YDM",
+        mine: "Tarseft",
+        depot: "Chez Freshways",
+        port: "Port à définir",
+        currency: "MAD",
+        theme: "light"
+      },
+
+      data: {
+        tasks: [],
+        admin: [],
+        expenses: [],
+        stock: [],
+        road: [],
+        shipments: [],
+        exportdocs: [],
+        contacts: []
+      },
+
+      customModules: [],
+
+      customData: {},
+
+      activity: [],
+
+      trash: [],
+
+      meta: {
+        createdAt: new Date().toISOString(),
+        updatedAt: null
+      }
+    };
+
+    let state = structuredClone(DEFAULT_STATE);
+    let currentView = "dashboard";
+    let currentTaskTab = "urgent";
+    let currentEditorModule = null;
+    let currentEditorId = null;
+    let toastTimer = null;
+
+    const filters = {
+      company: "ALL",
+      status: "ALL",
+      project: "ALL",
+      search: ""
+    };
+
+    function deepClone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function mergeState(input) {
+      const base = deepClone(DEFAULT_STATE);
+      const source = input && typeof input === "object" ? input : {};
+
+      const result = {
+        ...base,
+        ...source,
+
+        settings: {
+          ...base.settings,
+          ...(source.settings || {})
+        },
+
+        data: {
+          ...base.data,
+          ...(source.data || {})
+        },
+
+        customData: {
+          ...base.customData,
+          ...(source.customData || {})
+        },
+
+        meta: {
+          ...base.meta,
+          ...(source.meta || {})
+        }
+      };
+
+      Object.keys(base.data).forEach((key) => {
+        if (!Array.isArray(result.data[key])) {
+          result.data[key] = [];
+        }
+      });
+
+      if (!Array.isArray(result.customModules)) {
+        result.customModules = [];
+      }
+
+      if (!Array.isArray(result.activity)) {
+        result.activity = [];
+      }
+
+      if (!Array.isArray(result.trash)) {
+        result.trash = [];
+      }
+
+      return result;
+    }
+
+    function createId() {
+      if (
+        window.crypto &&
+        typeof window.crypto.randomUUID === "function"
+      ) {
+        return window.crypto.randomUUID();
+      }
+
+      return (
+        Date.now().toString(36) +
+        Math.random().toString(36).slice(2)
+      );
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalizeText(value) {
+      return String(value ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
+
+    function todayIso() {
+      const date = new Date();
+      const offset = date.getTimezoneOffset();
+      const local = new Date(date.getTime() - offset * 60000);
+
+      return local.toISOString().slice(0, 10);
+    }
+
+    function formatDate(value) {
+      if (!value) {
+        return "—";
+      }
+
+      const date = new Date(`${value}T12:00:00`);
+
+      if (Number.isNaN(date.getTime())) {
+        return String(value);
+      }
+
+      return date.toLocaleDateString("fr-FR");
+    }
+
+    function formatDateTime(value) {
+      if (!value) {
+        return "—";
+      }
+
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) {
+        return String(value);
+      }
+
+      return date.toLocaleString("fr-FR");
+    }
+
+    function formatNumber(value, decimals = 2) {
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return "—";
+      }
+
+      return number.toLocaleString("fr-FR", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function formatMoney(value, currency = "MAD") {
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return "—";
+      }
+
+      return `${number.toLocaleString("fr-FR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })} ${currency || "MAD"}`;
+    }
+
+    function dateDifference(dateString) {
+      if (!dateString) {
+        return null;
+      }
+
+      const end = new Date(`${dateString}T23:59:59`);
+      const now = new Date();
+
+      return Math.ceil((end - now) / 86400000);
+    }
+
+    function isTaskClosed(task) {
+      return ["Terminée", "Annulée"].includes(task.status);
+    }
+
+    function getCompanyName(code) {
+      if (code === "SMMIM") {
+        return state.settings.smmimName || "SMMIM";
+      }
+
+      if (code === "YDM") {
+        return state.settings.ydmName || "YDM";
+      }
+
+      return code || "—";
+    }
+
+    function moduleDefinition(moduleName) {
+      if (MODULES[moduleName]) {
+        return MODULES[moduleName];
+      }
+
+      return state.customModules.find(
+        (module) => module.id === moduleName
+      );
+    }
+
+    function moduleItems(moduleName) {
+      if (state.data[moduleName]) {
+        return state.data[moduleName];
+      }
+
+      if (!state.customData[moduleName]) {
+        state.customData[moduleName] = [];
+      }
+
+      return state.customData[moduleName];
+    }
+
+    function setModuleItems(moduleName, records) {
+      if (state.data[moduleName]) {
+        state.data[moduleName] = records;
+      } else {
+        state.customData[moduleName] = records;
+      }
+    }
+
+    function attachmentCount(record) {
+      return Array.isArray(record.attachments)
+        ? record.attachments.length
+        : 0;
+    }
+
+    function addActivity(action, moduleName, record) {
+      const title =
+        record.title ||
+        record.reference ||
+        record.name ||
+        record.label ||
+        "Élément";
+
+      state.activity.unshift({
+        id: createId(),
+        action,
+        moduleName,
+        recordId: record.id,
+        title,
+        createdAt: new Date().toISOString()
+      });
+
+      state.activity = state.activity.slice(0, 200);
+    }
+
+    function priorityRank(priority) {
+      const ranks = {
+        Critique: 5,
+        Urgente: 4,
+        Haute: 3,
+        Normale: 2,
+        Basse: 1
+      };
+
+      return ranks[priority] || 0;
+    }
+
+    function taskUrgencyScore(task) {
+      let score = priorityRank(task.priority) * 20;
+      const days = dateDifference(task.dueDate);
+
+      if (days !== null && days < 0) {
+        score += 200 + Math.abs(days);
+      } else if (days === 0) {
+        score += 150;
+      } else if (days !== null && days <= 3) {
+        score += 100 - days;
+      }
+
+      if (task.status === "Bloquée") {
+        score += 80;
+      }
+
+      if (task.favorite) {
+        score += 20;
+      }
+
+      return score;
+    }
+
+    function taskMatchesTab(task, tab) {
+      const days = dateDifference(task.dueDate);
+      const closed = isTaskClosed(task);
+      const today = todayIso();
+
+      if (tab === "urgent") {
+        return (
+          !closed &&
+          (
+            ["Critique", "Urgente"].includes(task.priority) ||
+            (days !== null && days < 0) ||
+            task.status === "Bloquée"
+          )
+        );
+      }
+
+      if (tab === "today") {
+        return !closed && task.dueDate === today;
+      }
+
+      if (tab === "upcoming") {
+        return (
+          !closed &&
+          days !== null &&
+          days > 0 &&
+          days <= 30
+        );
+      }
+
+      if (tab === "personal") {
+        return !closed && task.company === "Personnel";
+      }
+
+      if (tab === "delegated") {
+        return (
+          !closed &&
+          Boolean(String(task.assignedTo || "").trim())
+        );
+      }
+
+      if (tab === "waiting") {
+        return (
+          !closed &&
+          (
+            task.status === "En attente" ||
+            Boolean(String(task.waitingFor || "").trim())
+          )
+        );
+      }
+
+      if (tab === "recurring") {
+        return (
+          !closed &&
+          task.recurrence &&
+          task.recurrence !== "Aucune"
+        );
+      }
+
+      if (tab === "completed") {
+        return task.status === "Terminée";
+      }
+
+      if (tab === "archived") {
+        return Boolean(task.archived);
+      }
+
+      return true;
+    }
+
+    function getFilteredTasks() {
+      const search = normalizeText(filters.search);
+
+      return state.data.tasks
+        .filter((task) => taskMatchesTab(task, currentTaskTab))
+        .filter((task) => {
+          if (
+            filters.company !== "ALL" &&
+            task.company !== filters.company
+          ) {
+            return false;
+          }
+
+          if (
+            filters.status !== "ALL" &&
+            task.status !== filters.status
+          ) {
+            return false;
+          }
+
+          if (!search) {
+            return true;
+          }
+
+          return normalizeText(
+            [
+              task.title,
+              task.description,
+              task.project,
+              task.category,
+              task.owner,
+              task.assignedTo,
+              task.waitingFor,
+              task.blocker,
+              task.nextAction,
+              task.notes
+            ].join(" ")
+          ).includes(search);
+        })
+        .sort((a, b) => {
+          if (currentTaskTab === "urgent") {
+            return taskUrgencyScore(b) - taskUrgencyScore(a);
+          }
+
+          const dateA = a.dueDate || "9999-12-31";
+          const dateB = b.dueDate || "9999-12-31";
+
+          return dateA.localeCompare(dateB);
+        });
+    }
+
+    function getFilteredItems(moduleName) {
+      if (moduleName === "tasks") {
+        return getFilteredTasks();
+      }
+
+      const search = normalizeText(filters.search);
+
+      return moduleItems(moduleName)
+        .filter((record) => {
+          if (
+            filters.company !== "ALL" &&
+            record.company !== filters.company &&
+            record.linkedCompany !== filters.company
+          ) {
+            return false;
+          }
+
+          if (
+            filters.status !== "ALL" &&
+            record.status !== filters.status
+          ) {
+            return false;
+          }
+
+          if (
+            filters.project !== "ALL" &&
+            record.project !== filters.project &&
+            record.shipmentRef !== filters.project
+          ) {
+            return false;
+          }
+
+          if (!search) {
+            return true;
+          }
+
+          return normalizeText(
+            JSON.stringify(record)
+          ).includes(search);
+        })
+        .sort((a, b) => {
+          const dateA =
+            a.date ||
+            a.dueDate ||
+            a.deadline ||
+            a.updatedAt ||
+            "";
+
+          const dateB =
+            b.date ||
+            b.dueDate ||
+            b.deadline ||
+            b.updatedAt ||
+            "";
+
+          return String(dateB).localeCompare(String(dateA));
+        });
+    }
+
+    function logisticsMetrics(shipment) {
+      const road = Number(shipment.roadInvoice || 0);
+      const forwarder = Number(shipment.forwarderInvoice || 0);
+      const laboratory = Number(
+        shipment.laboratoryInvoice || 0
+      );
+
+      const total = road + forwarder + laboratory;
+      const tonnage = Number(shipment.shippedTonnage || 0);
+
+      return {
+        road,
+        forwarder,
+        laboratory,
+        total,
+        perTonne: tonnage > 0 ? total / tonnage : 0
+      };
+    }
+
+    function stockBalance(company = null) {
+      return state.data.stock
+        .filter((record) => {
+          if (record.status === "Annulé") {
+            return false;
+          }
+
+          if (company && record.company !== company) {
+            return false;
+          }
+
+          return true;
+        })
+        .reduce((total, record) => {
+          const quantity = Number(record.quantity || 0);
+
+          if (
+            record.movement === "Sortie" ||
+            record.movement === "Ajustement négatif"
+          ) {
+            return total - quantity;
+          }
+
+          return total + quantity;
+        }, 0);
+    }
+
+    function projectExpenseSummary(project = null) {
+      const records = state.data.expenses.filter((record) => {
+        return !project || record.project === project;
+      });
+
+      let received = 0;
+      let spent = 0;
+      let unjustified = 0;
+
+      records.forEach((record) => {
+        const amount = Number(record.amount || 0);
+
+        if (record.movement === "Montant reçu") {
+          received += amount;
+        } else {
+          spent += amount;
+
+          if (!record.justified) {
+            unjustified += amount;
+          }
+        }
+      });
+
+      return {
+        received,
+        spent,
+        balance: received - spent,
+        unjustified
+      };
+    }
+
+    function statusBadge(status) {
+      if (!status) {
+        return "—";
+      }
+
+      const success = [
+        "Terminée",
+        "Confirmé",
+        "Livré",
+        "Parti",
+        "Embarqué",
+        "Disponible",
+        "Validé",
+        "Accordé"
+      ];
+
+      const warning = [
+        "Urgente",
+        "À vérifier",
+        "En attente",
+        "À signer",
+        "Complément demandé",
+        "Renouvellement"
+      ];
+
+      const danger = [
+        "Critique",
+        "Bloquée",
+        "Bloqué",
+        "Manquant",
+        "Expiré",
+        "Refusé"
+      ];
+
+      const blue = [
+        "En cours",
+        "En route",
+        "Déposé",
+        "En instruction",
+        "Empotage",
+        "Vers le port",
+        "Au port"
+      ];
+
+      let color = "primary";
+
+      if (success.includes(status)) {
+        color = "success";
+      } else if (warning.includes(status)) {
+        color = "warning";
+      } else if (danger.includes(status)) {
+        color = "danger";
+      } else if (blue.includes(status)) {
+        color = "blue";
+      }
+
+      return `
+        <span class="badge ${color}">
+          ${escapeHtml(status)}
+        </span>
+      `;
+    }
+
+    function priorityBadge(priority) {
+      if (!priority) {
+        return "—";
+      }
+
+      let color = "primary";
+
+      if (priority === "Critique") {
+        color = "danger";
+      } else if (priority === "Urgente") {
+        color = "warning";
+      } else if (priority === "Haute") {
+        color = "blue";
+      }
+
+      return `
+        <span class="badge ${color}">
+          ${escapeHtml(priority)}
+        </span>
+      `;
+    }
+
+    function pageHeader(
+      title,
+      description,
+      moduleName = null,
+      extraActions = ""
+    ) {
+      const moduleActions = moduleName
+        ? `
+          <button
+            class="button"
+            data-export-csv="${moduleName}"
+            type="button"
+          >
+            Export CSV
+          </button>
+
+          <button
+            class="button"
+            data-export-excel="${moduleName}"
+            type="button"
+          >
+            Export Excel
+          </button>
+
+          <button
+            class="button primary"
+            data-add="${moduleName}"
+            type="button"
+          >
+            ＋ Ajouter
+          </button>
+        `
+        : "";
+
+      return `
+        <header class="page-header">
+          <div>
+            <h1 class="page-title">
+              ${escapeHtml(title)}
+            </h1>
+
+            <p class="page-description">
+              ${escapeHtml(description)}
+            </p>
+          </div>
+
+          <div class="page-actions">
+            ${extraActions}
+
+            <button
+              class="button"
+              data-print
+              type="button"
+            >
+              Imprimer / PDF
+            </button>
+
+            ${moduleActions}
+          </div>
+        </header>
+      `;
+    }
+
+    /*
+      FIN DE LA PARTIE 2/3.
+      Ne fermez pas la balise <script>.
+      La partie 3 ajoutera l’affichage, l’enregistrement IndexedDB,
+      les formulaires, les pièces jointes et les exports.
+    */    let database = null;
+    let attachmentTarget = null;
+
+    function openDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+
+          if (!db.objectStoreNames.contains("app")) {
+            db.createObjectStore("app");
+          }
+        };
+
+        request.onsuccess = () => {
+          database = request.result;
+          resolve(database);
+        };
+
+        request.onerror = () => {
+          reject(request.error);
+        };
+      });
+    }
+
+    function databaseGet(key) {
+      return new Promise((resolve, reject) => {
+        if (!database) {
+          resolve(null);
+          return;
+        }
+
+        const transaction = database.transaction("app", "readonly");
+        const store = transaction.objectStore("app");
+        const request = store.get(key);
+
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function databasePut(key, value) {
+      return new Promise((resolve, reject) => {
+        if (!database) {
+          reject(new Error("Base de données indisponible"));
+          return;
+        }
+
+        const transaction = database.transaction("app", "readwrite");
+        const store = transaction.objectStore("app");
+        const request = store.put(value, key);
+
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function loadApplicationState() {
+      try {
+        await openDatabase();
+        const saved = await databaseGet(STATE_KEY);
+
+        if (saved) {
+          state = mergeState(saved);
+        } else {
+          state = mergeState(DEFAULT_STATE);
+          await databasePut(STATE_KEY, state);
+        }
+      } catch (error) {
+        console.error(error);
+        state = mergeState(DEFAULT_STATE);
+        showToast(
+          "Le stockage local est indisponible. Utilise les sauvegardes JSON.",
+          true
+        );
+      }
+    }
+
+    async function saveApplicationState(message = "Modifications enregistrées") {
+      state.meta.updatedAt = new Date().toISOString();
+
+      try {
+        if (!database) {
+          await openDatabase();
+        }
+
+        await databasePut(STATE_KEY, state);
+
+        const indicator = document.getElementById("saveIndicator");
+
+        if (indicator) {
+          indicator.textContent =
+            "Enregistré à " +
+            new Date().toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit"
+            });
+        }
+
+        if (message) {
+          showToast(message);
+        }
+      } catch (error) {
+        console.error(error);
+        showToast(
+          "Échec de l’enregistrement. Télécharge une sauvegarde JSON.",
+          true
+        );
+      }
+    }
+
+    function showToast(message, error = false) {
+      const toast = document.getElementById("toast");
+
+      if (!toast) {
+        return;
+      }
+
+      toast.textContent = message;
+      toast.style.background = error ? "#8f293d" : "#4b2939";
+      toast.classList.add("show");
+
+      clearTimeout(toastTimer);
+
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    function updateInterfaceIdentity() {
+      document.title = state.settings.appName || "Pilotage opérationnel";
+
+      document.getElementById("brandTitle").textContent =
+        state.settings.appName || "Pilotage opérationnel";
+
+      document.getElementById("sidebarCompany").textContent =
+        state.settings.smmimName || "SMMIM";
+
+      document.getElementById("sidebarRoute").textContent =
+        [
+          state.settings.mine,
+          state.settings.depot,
+          state.settings.port
+        ]
+          .filter(Boolean)
+          .join(" → ");
+
+      document.documentElement.setAttribute(
+        "data-theme",
+        state.settings.theme || "light"
+      );
+
+      const openTasks = state.data.tasks.filter(
+        (task) => !isTaskClosed(task) && !task.archived
+      ).length;
+
+      document.getElementById("taskCount").textContent = openTasks;
+    }
+
+    function renderCustomNavigation() {
+      const navigation = document.getElementById("customNavigation");
+
+      if (!navigation) {
+        return;
+      }
+
+      navigation.innerHTML = state.customModules
+        .filter((module) => !module.hidden)
+        .map(
+          (module) => `
+            <li>
+              <button
+                class="nav-button"
+                data-view="${escapeHtml(module.id)}"
+                type="button"
+              >
+                <span class="nav-icon">
+                  ${escapeHtml(module.icon || "◇")}
+                </span>
+
+                ${escapeHtml(module.title)}
+              </button>
+            </li>
+          `
+        )
+        .join("");
+    }
+
+    function navigateTo(view) {
+      const customExists = state.customModules.some(
+        (module) => module.id === view
+      );
+
+      if (!BUILTIN_VIEWS.includes(view) && !customExists) {
+        view = "dashboard";
+      }
+
+      currentView = view;
+      window.location.hash = view;
+
+      document.querySelectorAll(".nav-button").forEach((button) => {
+        button.classList.toggle(
+          "active",
+          button.dataset.view === currentView
+        );
+      });
+
+      document.getElementById("sidebar").classList.remove("open");
+      document.getElementById("mainContent").scrollTop = 0;
+
+      resetFilters(false);
+      renderApplication();
+    }
+
+    function resetFilters(render = true) {
+      filters.company = "ALL";
+      filters.status = "ALL";
+      filters.project = "ALL";
+      filters.search = "";
+
+      if (render) {
+        renderApplication();
+      }
+    }
+
+    function uniqueValues(records, key) {
+      return [
+        ...new Set(
+          records
+            .map((record) => record[key])
+            .filter((value) => value !== null && value !== undefined && value !== "")
+        )
+      ].sort();
+    }
+
+    function renderFilterBar(moduleName) {
+      const records = moduleItems(moduleName);
+      const statuses = uniqueValues(records, "status");
+
+      const projects = [
+        ...new Set(
+          records
+            .flatMap((record) => [
+              record.project,
+              record.shipmentRef
+            ])
+            .filter(Boolean)
+        )
+      ].sort();
+
+      return `
+        <section class="filter-bar" aria-label="Filtres">
+          <select id="companyFilter" aria-label="Société">
+            <option value="ALL">Toutes les sociétés</option>
+
+            <option
+              value="SMMIM"
+              ${filters.company === "SMMIM" ? "selected" : ""}
+            >
+              ${escapeHtml(state.settings.smmimName)}
+            </option>
+
+            <option
+              value="YDM"
+              ${filters.company === "YDM" ? "selected" : ""}
+            >
+              ${escapeHtml(state.settings.ydmName)}
+            </option>
+
+            ${
+              moduleName === "tasks"
+                ? `
+                  <option
+                    value="Personnel"
+                    ${filters.company === "Personnel" ? "selected" : ""}
+                  >
+                    Personnel
+                  </option>
+                `
+                : ""
+            }
+          </select>
+
+          <select id="statusFilter" aria-label="Statut">
+            <option value="ALL">Tous les statuts</option>
+
+            ${statuses
+              .map(
+                (status) => `
+                  <option
+                    value="${escapeHtml(status)}"
+                    ${filters.status === status ? "selected" : ""}
+                  >
+                    ${escapeHtml(status)}
+                  </option>
+                `
+              )
+              .join("")}
+          </select>
+
+          ${
+            projects.length
+              ? `
+                <select id="projectFilter" aria-label="Projet">
+                  <option value="ALL">Tous les projets</option>
+
+                  ${projects
+                    .map(
+                      (project) => `
+                        <option
+                          value="${escapeHtml(project)}"
+                          ${filters.project === project ? "selected" : ""}
+                        >
+                          ${escapeHtml(project)}
+                        </option>
+                      `
+                    )
+                    .join("")}
+                </select>
+              `
+              : ""
+          }
+
+          <input
+            id="moduleSearch"
+            type="search"
+            value="${escapeHtml(filters.search)}"
+            placeholder="Rechercher dans ce registre..."
+            aria-label="Recherche"
+          >
+
+          <button
+            class="button small"
+            id="resetFiltersButton"
+            type="button"
+          >
+            Réinitialiser
+          </button>
+        </section>
+      `;
+    }
+
+    function derivedValue(moduleName, record, key) {
+      if (key === "company") {
+        return getCompanyName(record.company);
+      }
+
+      if (key === "attachments") {
+        return attachmentCount(record);
+      }
+
+      if (moduleName === "road" && key === "route") {
+        return [record.origin, record.destination]
+          .filter(Boolean)
+          .join(" → ") || "—";
+      }
+
+      if (moduleName === "road" && key === "netWeight") {
+        const gross = Number(record.grossWeight || 0);
+        const tare = Number(record.tareWeight || 0);
+
+        if (!gross && !tare) {
+          return "—";
+        }
+
+        return `${formatNumber(gross - tare, 3)} t`;
+      }
+
+      if (
+        moduleName === "road" &&
+        key === "roadCost"
+      ) {
+        return formatMoney(
+          record.roadCost,
+          record.currency || state.settings.currency
+        );
+      }
+
+      if (
+        moduleName === "stock" &&
+        key === "quantity"
+      ) {
+        return record.quantity !== "" &&
+          record.quantity !== undefined
+          ? `${formatNumber(record.quantity, 3)} t`
+          : "—";
+      }
+
+      if (moduleName === "expenses" && key === "amount") {
+        return formatMoney(
+          record.amount,
+          record.currency || state.settings.currency
+        );
+      }
+
+      if (moduleName === "expenses" && key === "justified") {
+        return record.justified ? "Oui" : "Non";
+      }
+
+      if (moduleName === "shipments") {
+        const metrics = logisticsMetrics(record);
+        const currency =
+          record.currency || state.settings.currency;
+
+        if (key === "shippedTonnage") {
+          return `${formatNumber(record.shippedTonnage, 3)} t`;
+        }
+
+        if (key === "roadInvoice") {
+          return formatMoney(metrics.road, currency);
+        }
+
+        if (key === "forwarderInvoice") {
+          return formatMoney(metrics.forwarder, currency);
+        }
+
+        if (key === "laboratoryInvoice") {
+          return formatMoney(metrics.laboratory, currency);
+        }
+
+        if (key === "logisticsTotal") {
+          return formatMoney(metrics.total, currency);
+        }
+
+        if (key === "costPerTonne") {
+          return `${formatMoney(metrics.perTonne, currency)}/t`;
+        }
+      }
+
+      if (moduleName === "tasks" && key === "progress") {
+        return `${Math.max(
+          0,
+          Math.min(100, Number(record.progress || 0))
+        )}%`;
+      }
+
+      const definition = moduleDefinition(moduleName);
+
+      const field = definition?.fields?.find(
+        (candidate) => candidate.name === key
+      );
+
+      if (field?.type === "date") {
+        return formatDate(record[key]);
+      }
+
+      if (field?.type === "datetime-local") {
+        return formatDateTime(record[key]);
+      }
+
+      return record[key] ?? "—";
+    }
+
+    function renderCell(moduleName, record, column, index) {
+      const key = column.key;
+      const raw = record[key];
+      const value = derivedValue(moduleName, record, key);
+
+      if (key === "status") {
+        return statusBadge(raw);
+      }
+
+      if (key === "priority") {
+        return priorityBadge(raw);
+      }
+
+      if (key === "company") {
+        return `
+          <span class="badge primary">
+            ${escapeHtml(value)}
+          </span>
+        `;
+      }
+
+      if (
+        moduleName === "expenses" &&
+        key === "justified"
+      ) {
+        return record.justified
+          ? `<span class="badge success">Oui</span>`
+          : `<span class="badge danger">Non</span>`;
+      }
+
+      if (key === "attachments") {
+        return attachmentCount(record)
+          ? `<span class="badge blue">${attachmentCount(record)}</span>`
+          : "0";
+      }
+
+      if (
+        moduleName === "tasks" &&
+        key === "progress"
+      ) {
+        const progress = Math.max(
+          0,
+          Math.min(100, Number(record.progress || 0))
+        );
+
+        return `
+          <div style="display:flex;align-items:center;gap:8px">
+            <div
+              style="
+                width:90px;
+                height:8px;
+                background:var(--surface-3);
+                border-radius:999px;
+                overflow:hidden;
+              "
+            >
+              <div
+                style="
+                  width:${progress}%;
+                  height:100%;
+                  background:var(--primary);
+                "
+              ></div>
+            </div>
+
+            <small>${progress}%</small>
+          </div>
+        `;
+      }
+
+      const note =
+        index === 0 &&
+        record.notes
+          ? `
+            <small
+              style="
+                display:block;
+                max-width:300px;
+                overflow:hidden;
+                margin-top:4px;
+                color:var(--muted);
+                font-size:var(--text-xs);
+                text-overflow:ellipsis;
+                white-space:nowrap;
+              "
+            >
+              ${escapeHtml(record.notes)}
+            </small>
+          `
+          : "";
+
+      return `
+        ${escapeHtml(value)}
+        ${note}
+      `;
+    }
+
+    function renderGenericTable(moduleName, records) {
+      const definition = moduleDefinition(moduleName);
+
+      if (!definition || !records.length) {
+        return `
+          <section class="table-card">
+            <div class="empty-state">
+              <strong>Aucun élément enregistré</strong>
+
+              <p>
+                Ajoute ton premier enregistrement dans ce volet.
+              </p>
+
+              <button
+                class="button primary"
+                data-add="${escapeHtml(moduleName)}"
+                type="button"
+              >
+                ＋ Ajouter
+              </button>
+            </div>
+          </section>
+        `;
+      }
+
+      return `
+        <section class="table-card">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  ${definition.columns
+                    .map(
+                      (column) => `
+                        <th>${escapeHtml(column.label)}</th>
+                      `
+                    )
+                    .join("")}
+
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                ${records
+                  .map(
+                    (record) => `
+                      <tr>
+                        ${definition.columns
+                          .map(
+                            (column, index) => `
+                              <td>
+                                ${renderCell(
+                                  moduleName,
+                                  record,
+                                  column,
+                                  index
+                                )}
+                              </td>
+                            `
+                          )
+                          .join("")}
+
+                        <td>
+                          <div class="row-actions">
+                            ${
+                              moduleName === "tasks" &&
+                              record.status !== "Terminée"
+                                ? `
+                                  <button
+                                    class="action-button"
+                                    data-complete-task="${record.id}"
+                                    type="button"
+                                  >
+                                    Terminer
+                                  </button>
+                                `
+                                : ""
+                            }
+
+                            <button
+                              class="action-button"
+                              data-attachment-module="${escapeHtml(moduleName)}"
+                              data-attachment-id="${record.id}"
+                              type="button"
+                            >
+                              Pièces
+                            </button>
+
+                            <button
+                              class="action-button"
+                              data-edit-module="${escapeHtml(moduleName)}"
+                              data-edit-id="${record.id}"
+                              type="button"
+                            >
+                              Modifier
+                            </button>
+
+                            <button
+                              class="action-button"
+                              data-duplicate-module="${escapeHtml(moduleName)}"
+                              data-duplicate-id="${record.id}"
+                              type="button"
+                            >
+                              Dupliquer
+                            </button>
+
+                            <button
+                              class="action-button delete"
+                              data-delete-module="${escapeHtml(moduleName)}"
+                              data-delete-id="${record.id}"
+                              type="button"
+                            >
+                              Supprimer
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    `
+                  )
+                  .join("")}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderTaskTabs() {
+      const tabs = [
+        ["urgent", "Urgentes & en retard"],
+        ["today", "Aujourd’hui"],
+        ["upcoming", "À venir"],
+        ["personal", "Personnelles"],
+        ["delegated", "Déléguées"],
+        ["waiting", "En attente"],
+        ["recurring", "Récurrentes"],
+        ["completed", "Terminées"],
+        ["all", "Toutes"]
+      ];
+
+      return `
+        <nav class="tabs" aria-label="Vues des tâches">
+          ${tabs
+            .map(
+              ([id, label]) => `
+                <button
+                  class="tab-button ${
+                    currentTaskTab === id ? "active" : ""
+                  }"
+                  data-task-tab="${id}"
+                  type="button"
+                >
+                  ${escapeHtml(label)}
+                </button>
+              `
+            )
+            .join("")}
+        </nav>
+      `;
+    }
+
+    function renderTasksPage() {
+      const tasks = getFilteredTasks();
+
+      const openTasks = state.data.tasks.filter(
+        (task) => !isTaskClosed(task) && !task.archived
+      );
+
+      const overdue = openTasks.filter(
+        (task) => {
+          const days = dateDifference(task.dueDate);
+          return days !== null && days < 0;
+        }
+      );
+
+      const today = openTasks.filter(
+        (task) => task.dueDate === todayIso()
+      );
+
+      const blocked = openTasks.filter(
+        (task) => task.status === "Bloquée"
+      );
+
+      const actions = `
+        <button
+          class="button"
+          id="importTasksButton"
+          type="button"
+        >
+          Importer Excel / CSV
+        </button>
+
+        <button
+          class="button"
+          id="exportXmindButton"
+          type="button"
+        >
+          Export XMind
+        </button>
+
+        <button
+          class="button"
+          id="exportOpmlButton"
+          type="button"
+        >
+          Export OPML
+        </button>
+      `;
+
+      return `
+        ${pageHeader(
+          MODULES.tasks.title,
+          MODULES.tasks.description,
+          "tasks",
+          actions
+        )}
+
+        <section class="kpi-grid">
+          <article class="kpi-card">
+            <span class="kpi-label">Tâches ouvertes</span>
+            <div class="kpi-value">${openTasks.length}</div>
+            <span class="kpi-hint">
+              Tous domaines confondus
+            </span>
+          </article>
+
+          <article class="kpi-card danger">
+            <span class="kpi-label">En retard</span>
+            <div class="kpi-value">${overdue.length}</div>
+            <span class="kpi-hint">
+              Action immédiate requise
+            </span>
+          </article>
+
+          <article class="kpi-card warning">
+            <span class="kpi-label">Aujourd’hui</span>
+            <div class="kpi-value">${today.length}</div>
+            <span class="kpi-hint">
+              Échéances du jour
+            </span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Bloquées</span>
+            <div class="kpi-value">${blocked.length}</div>
+            <span class="kpi-hint">
+              Blocages à résoudre
+            </span>
+          </article>
+        </section>
+
+        ${renderTaskTabs()}
+        ${renderFilterBar("tasks")}
+        ${renderGenericTable("tasks", tasks)}
+      `;
+    }
+
+    function recentActivityHtml() {
+      if (!state.activity.length) {
+        return `
+          <div class="empty-state">
+            <strong>Journal encore vide</strong>
+            <p>
+              Les ajouts et modifications apparaîtront ici.
+            </p>
+          </div>
+        `;
+      }
+
+      return `
+        <ul style="list-style:none">
+          ${state.activity
+            .slice(0, 10)
+            .map(
+              (activity) => `
+                <li
+                  style="
+                    display:grid;
+                    grid-template-columns:auto 1fr auto;
+                    gap:12px;
+                    align-items:center;
+                    padding:12px 0;
+                    border-bottom:1px solid var(--divider);
+                  "
+                >
+                  <span
+                    style="
+                      width:9px;
+                      height:9px;
+                      background:var(--primary);
+                      border-radius:50%;
+                    "
+                  ></span>
+
+                  <div>
+                    <strong style="display:block">
+                      ${escapeHtml(activity.title)}
+                    </strong>
+
+                    <small style="color:var(--muted)">
+                      ${escapeHtml(activity.action)}
+                    </small>
+                  </div>
+
+                  <small style="color:var(--muted)">
+                    ${new Date(
+                      activity.createdAt
+                    ).toLocaleDateString("fr-FR")}
+                  </small>
+                </li>
+              `
+            )
+            .join("")}
+        </ul>
+      `;
+    }
+
+    function urgentTasksHtml() {
+      const urgent = state.data.tasks
+        .filter((task) => {
+          return (
+            !isTaskClosed(task) &&
+            taskMatchesTab(task, "urgent") &&
+            !task.archived
+          );
+        })
+        .sort(
+          (a, b) =>
+            taskUrgencyScore(b) - taskUrgencyScore(a)
+        )
+        .slice(0, 8);
+
+      if (!urgent.length) {
+        return `
+          <div class="empty-state">
+            <strong>Aucune urgence</strong>
+            <p>
+              Les tâches critiques et en retard apparaîtront ici.
+            </p>
+          </div>
+        `;
+      }
+
+      return `
+        <ul style="list-style:none">
+          ${urgent
+            .map((task) => {
+              const days = dateDifference(task.dueDate);
+
+              const delay =
+                days === null
+                  ? "Sans échéance"
+                  : days < 0
+                    ? `${Math.abs(days)} jour(s) de retard`
+                    : days === 0
+                      ? "Aujourd’hui"
+                      : `Dans ${days} jour(s)`;
+
+              return `
+                <li
+                  style="
+                    display:grid;
+                    grid-template-columns:auto 1fr auto;
+                    gap:12px;
+                    align-items:center;
+                    padding:12px 0;
+                    border-bottom:1px solid var(--divider);
+                  "
+                >
+                  <span
+                    style="
+                      width:10px;
+                      height:10px;
+                      background:${
+                        days !== null && days < 0
+                          ? "var(--danger)"
+                          : "var(--warning)"
+                      };
+                      border-radius:50%;
+                    "
+                  ></span>
+
+                  <div>
+                    <strong style="display:block">
+                      ${escapeHtml(task.title)}
+                    </strong>
+
+                    <small style="color:var(--muted)">
+                      ${escapeHtml(
+                        getCompanyName(task.company)
+                      )}
+                      ·
+                      ${escapeHtml(
+                        task.owner || "Sans responsable"
+                      )}
+                    </small>
+                  </div>
+
+                  <span
+                    class="badge ${
+                      days !== null && days < 0
+                        ? "danger"
+                        : "warning"
+                    }"
+                  >
+                    ${escapeHtml(delay)}
+                  </span>
+                </li>
+              `;
+            })
+            .join("")}
+        </ul>
+      `;
+    }
+
+    function renderDashboard() {
+      const openTasks = state.data.tasks.filter(
+        (task) => !isTaskClosed(task) && !task.archived
+      );
+
+      const overdue = openTasks.filter(
+        (task) => {
+          const days = dateDifference(task.dueDate);
+          return days !== null && days < 0;
+        }
+      );
+
+      const missingDocs = state.data.exportdocs.filter(
+        (document) =>
+          ["Manquant", "À préparer", "À signer", "Expiré"].includes(
+            document.status
+          )
+      );
+
+      const activeShipments = state.data.shipments.filter(
+        (shipment) =>
+          !["Livré", "Parti"].includes(shipment.status)
+      );
+
+      const expenses = projectExpenseSummary();
+
+      const totalTonnage = state.data.shipments.reduce(
+        (total, shipment) =>
+          total + Number(shipment.shippedTonnage || 0),
+        0
+      );
+
+      const totalLogistics = state.data.shipments.reduce(
+        (total, shipment) =>
+          total + logisticsMetrics(shipment).total,
+        0
+      );
+
+      const logisticsPerTonne =
+        totalTonnage > 0
+          ? totalLogistics / totalTonnage
+          : 0;
+
+      return `
+        ${pageHeader(
+          "Tour de contrôle 360°",
+          "Vision consolidée de tes priorités, opérations, coûts, stocks et documents."
+        )}
+
+        <section class="kpi-grid">
+          <article class="kpi-card">
+            <span class="kpi-label">Tâches ouvertes</span>
+            <div class="kpi-value">${openTasks.length}</div>
+            <span class="kpi-hint">SMMIM, YDM et personnel</span>
+          </article>
+
+          <article class="kpi-card danger">
+            <span class="kpi-label">Retards</span>
+            <div class="kpi-value">${overdue.length}</div>
+            <span class="kpi-hint">Échéances dépassées</span>
+          </article>
+
+          <article class="kpi-card warning">
+            <span class="kpi-label">Documents à traiter</span>
+            <div class="kpi-value">${missingDocs.length}</div>
+            <span class="kpi-hint">Manquants, expirés ou à signer</span>
+          </article>
+
+          <article class="kpi-card success">
+            <span class="kpi-label">Stock disponible</span>
+            <div class="kpi-value">
+              ${formatNumber(stockBalance(), 3)}
+            </div>
+            <span class="kpi-hint">Tonnes enregistrées</span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Expéditions actives</span>
+            <div class="kpi-value">${activeShipments.length}</div>
+            <span class="kpi-hint">Préparation au port</span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Dépenses projets</span>
+            <div class="kpi-value">
+              ${formatNumber(expenses.spent, 2)}
+            </div>
+            <span class="kpi-hint">
+              ${escapeHtml(state.settings.currency)}
+            </span>
+          </article>
+
+          <article class="kpi-card warning">
+            <span class="kpi-label">Sans justificatif</span>
+            <div class="kpi-value">
+              ${formatNumber(expenses.unjustified, 2)}
+            </div>
+            <span class="kpi-hint">
+              Dépenses à régulariser
+            </span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Coût logistique / tonne</span>
+            <div class="kpi-value">
+              ${formatNumber(logisticsPerTonne, 2)}
+            </div>
+            <span class="kpi-hint">
+              ${escapeHtml(state.settings.currency)} / t expédiée
+            </span>
+          </article>
+        </section>
+
+        <div class="dashboard-grid">
+          <section class="panel">
+            <header class="panel-header">
+              <h2 class="panel-title">
+                Urgences opérationnelles
+              </h2>
+
+              <button
+                class="button small"
+                data-view-target="tasks"
+                type="button"
+              >
+                Voir les tâches
+              </button>
+            </header>
+
+            <div class="panel-body">
+              ${urgentTasksHtml()}
+            </div>
+          </section>
+
+          <section class="panel">
+            <header class="panel-header">
+              <h2 class="panel-title">
+                Activité récente
+              </h2>
+            </header>
+
+            <div class="panel-body">
+              ${recentActivityHtml()}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function renderExpensesPage() {
+      const records = getFilteredItems("expenses");
+      const projects = uniqueValues(
+        state.data.expenses,
+        "project"
+      );
+
+      const global = projectExpenseSummary();
+
+      return `
+        ${pageHeader(
+          MODULES.expenses.title,
+          MODULES.expenses.description,
+          "expenses"
+        )}
+
+        <section class="kpi-grid">
+          <article class="kpi-card success">
+            <span class="kpi-label">Total reçu</span>
+            <div class="kpi-value">
+              ${formatNumber(global.received, 2)}
+            </div>
+            <span class="kpi-hint">
+              ${escapeHtml(state.settings.currency)}
+            </span>
+          </article>
+
+          <article class="kpi-card danger">
+            <span class="kpi-label">Total dépensé</span>
+            <div class="kpi-value">
+              ${formatNumber(global.spent, 2)}
+            </div>
+            <span class="kpi-hint">
+              ${escapeHtml(state.settings.currency)}
+            </span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Solde restant</span>
+            <div class="kpi-value">
+              ${formatNumber(global.balance, 2)}
+            </div>
+            <span class="kpi-hint">
+              Reçu moins dépensé
+            </span>
+          </article>
+
+          <article class="kpi-card warning">
+            <span class="kpi-label">Sans justificatif</span>
+            <div class="kpi-value">
+              ${formatNumber(global.unjustified, 2)}
+            </div>
+            <span class="kpi-hint">
+              À régulariser
+            </span>
+          </article>
+        </section>
+
+        ${
+          projects.length
+            ? `
+              <section
+                class="panel"
+                style="margin-bottom:var(--space-5)"
+              >
+                <header class="panel-header">
+                  <h2 class="panel-title">
+                    Situation par projet
+                  </h2>
+                </header>
+
+                <div class="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Projet</th>
+                        <th>Reçu</th>
+                        <th>Dépensé</th>
+                        <th>Reste</th>
+                        <th>Sans justificatif</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      ${projects
+                        .map((project) => {
+                          const result =
+                            projectExpenseSummary(project);
+
+                          return `
+                            <tr>
+                              <td>
+                                <strong>
+                                  ${escapeHtml(project)}
+                                </strong>
+                              </td>
+
+                              <td>
+                                ${formatMoney(
+                                  result.received,
+                                  state.settings.currency
+                                )}
+                              </td>
+
+                              <td>
+                                ${formatMoney(
+                                  result.spent,
+                                  state.settings.currency
+                                )}
+                              </td>
+
+                              <td>
+                                ${formatMoney(
+                                  result.balance,
+                                  state.settings.currency
+                                )}
+                              </td>
+
+                              <td>
+                                ${formatMoney(
+                                  result.unjustified,
+                                  state.settings.currency
+                                )}
+                              </td>
+                            </tr>
+                          `;
+                        })
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            `
+            : ""
+        }
+
+        ${renderFilterBar("expenses")}
+        ${renderGenericTable("expenses", records)}
+      `;
+    }
+
+    function renderShipmentsPage() {
+      const records = getFilteredItems("shipments");
+
+      const totalTonnage = records.reduce(
+        (total, shipment) =>
+          total + Number(shipment.shippedTonnage || 0),
+        0
+      );
+
+      const totalCosts = records.reduce(
+        (total, shipment) =>
+          total + logisticsMetrics(shipment).total,
+        0
+      );
+
+      const roadTotal = records.reduce(
+        (total, shipment) =>
+          total + logisticsMetrics(shipment).road,
+        0
+      );
+
+      const forwarderTotal = records.reduce(
+        (total, shipment) =>
+          total + logisticsMetrics(shipment).forwarder,
+        0
+      );
+
+      const laboratoryTotal = records.reduce(
+        (total, shipment) =>
+          total + logisticsMetrics(shipment).laboratory,
+        0
+      );
+
+      return `
+        ${pageHeader(
+          MODULES.shipments.title,
+          MODULES.shipments.description,
+          "shipments"
+        )}
+
+        <section class="kpi-grid">
+          <article class="kpi-card success">
+            <span class="kpi-label">Tonnage expédié</span>
+            <div class="kpi-value">
+              ${formatNumber(totalTonnage, 3)}
+            </div>
+            <span class="kpi-hint">Tonnes réelles</span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Transport routier</span>
+            <div class="kpi-value">
+              ${formatNumber(roadTotal, 2)}
+            </div>
+            <span class="kpi-hint">
+              ${escapeHtml(state.settings.currency)}
+            </span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Freight Forwarder</span>
+            <div class="kpi-value">
+              ${formatNumber(forwarderTotal, 2)}
+            </div>
+            <span class="kpi-hint">
+              ${escapeHtml(state.settings.currency)}
+            </span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Laboratoire</span>
+            <div class="kpi-value">
+              ${formatNumber(laboratoryTotal, 2)}
+            </div>
+            <span class="kpi-hint">
+              ${escapeHtml(state.settings.currency)}
+            </span>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Total logistique</span>
+            <div class="kpi-value">
+              ${formatNumber(totalCosts, 2)}
+            </div>
+            <span class="kpi-hint">
+              Trois facturations
+            </span>
+          </article>
+
+          <article class="kpi-card warning">
+            <span class="kpi-label">Coût / tonne expédiée</span>
+            <div class="kpi-value">
+              ${
+                totalTonnage > 0
+                  ? formatNumber(totalCosts / totalTonnage, 2)
+                  : "0"
+              }
+            </div>
+            <span class="kpi-hint">
+              ${escapeHtml(state.settings.currency)} / t
+            </span>
+          </article>
+        </section>
+
+        ${renderFilterBar("shipments")}
+        ${renderGenericTable("shipments", records)}
+      `;
+    }
+
+    function renderGenericPage(moduleName) {
+      const definition = moduleDefinition(moduleName);
+      const records = getFilteredItems(moduleName);
+
+      if (!definition) {
+        return `
+          <div class="empty-state">
+            <strong>Volet introuvable</strong>
+          </div>
+        `;
+      }
+
+      return `
+        ${pageHeader(
+          definition.title,
+          definition.description || "",
+          moduleName
+        )}
+
+        ${renderFilterBar(moduleName)}
+        ${renderGenericTable(moduleName, records)}
+      `;
+    }
+
+    function customModuleListHtml() {
+      if (!state.customModules.length) {
+        return `
+          <div class="empty-state">
+            <strong>Aucun volet personnalisé</strong>
+            <p>
+              Utilise le formulaire pour créer ton premier volet.
+            </p>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Ordre</th>
+                <th>Volet</th>
+                <th>Description</th>
+                <th>Champs</th>
+                <th>Visible</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${state.customModules
+                .map(
+                  (module, index) => `
+                    <tr>
+                      <td>${index + 1}</td>
+
+                      <td>
+                        <strong>
+                          ${escapeHtml(module.title)}
+                        </strong>
+                      </td>
+
+                      <td>
+                        ${escapeHtml(module.description || "—")}
+                      </td>
+
+                      <td>
+                        ${module.fields?.length || 0}
+                      </td>
+
+                      <td>
+                        ${
+                          module.hidden
+                            ? `<span class="badge warning">Masqué</span>`
+                            : `<span class="badge success">Visible</span>`
+                        }
+                      </td>
+
+                      <td>
+                        <div class="row-actions">
+                          <button
+                            class="action-button"
+                            data-custom-up="${module.id}"
+                            type="button"
+                          >
+                            ↑
+                          </button>
+
+                          <button
+                            class="action-button"
+                            data-custom-down="${module.id}"
+                            type="button"
+                          >
+                            ↓
+                          </button>
+
+                          <button
+                            class="action-button"
+                            data-custom-edit="${module.id}"
+                            type="button"
+                          >
+                            Modifier
+                          </button>
+
+                          <button
+                            class="action-button"
+                            data-custom-fields="${module.id}"
+                            type="button"
+                          >
+                            Champs
+                          </button>
+
+                          <button
+                            class="action-button"
+                            data-custom-toggle="${module.id}"
+                            type="button"
+                          >
+                            ${
+                              module.hidden
+                                ? "Afficher"
+                                : "Masquer"
+                            }
+                          </button>
+
+                          <button
+                            class="action-button delete"
+                            data-custom-delete="${module.id}"
+                            type="button"
+                          >
+                            Supprimer
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderSettingsPage() {
+      return `
+        ${pageHeader(
+          "Paramètres & volets",
+          "Personnalise les sociétés, sites, sauvegardes et modules de l’application."
+        )}
+
+        <div
+          style="
+            display:grid;
+            grid-template-columns:repeat(
+              auto-fit,
+              minmax(320px, 1fr)
+            );
+            gap:var(--space-5);
+          "
+        >
+          <section class="panel">
+            <header class="panel-header">
+              <h2 class="panel-title">
+                Identité et sites
+              </h2>
+            </header>
+
+            <form
+              class="panel-body"
+              id="settingsForm"
+            >
+              <div class="field" style="margin-bottom:16px">
+                <label for="settingAppName">
+                  Nom de l’application
+                </label>
+
+                <input
+                  id="settingAppName"
+                  name="appName"
+                  value="${escapeHtml(state.settings.appName)}"
+                  required
+                >
+              </div>
+
+              <div class="field" style="margin-bottom:16px">
+                <label for="settingSmmim">
+                  Nom SMMIM
+                </label>
+
+                <input
+                  id="settingSmmim"
+                  name="smmimName"
+                  value="${escapeHtml(state.settings.smmimName)}"
+                  required
+                >
+              </div>
+
+              <div class="field" style="margin-bottom:16px">
+                <label for="settingYdm">
+                  Nom YDM
+                </label>
+
+                <input
+                  id="settingYdm"
+                  name="ydmName"
+                  value="${escapeHtml(state.settings.ydmName)}"
+                  required
+                >
+              </div>
+
+              <div class="field" style="margin-bottom:16px">
+                <label for="settingMine">
+                  Mine / Chantier
+                </label>
+
+                <input
+                  id="settingMine"
+                  name="mine"
+                  value="${escapeHtml(state.settings.mine)}"
+                >
+              </div>
+
+              <div class="field" style="margin-bottom:16px">
+                <label for="settingDepot">
+                  Dépôt
+                </label>
+
+                <input
+                  id="settingDepot"
+                  name="depot"
+                  value="${escapeHtml(state.settings.depot)}"
+                >
+              </div>
+
+              <div class="field" style="margin-bottom:16px">
+                <label for="settingPort">
+                  Port
+                </label>
+
+                <input
+                  id="settingPort"
+                  name="port"
+                  value="${escapeHtml(state.settings.port)}"
+                >
+              </div>
+
+              <div class="field" style="margin-bottom:16px">
+                <label for="settingCurrency">
+                  Devise principale
+                </label>
+
+                <select
+                  id="settingCurrency"
+                  name="currency"
+                >
+                  ${["MAD", "USD", "EUR", "CNY"]
+                    .map(
+                      (currency) => `
+                        <option
+                          value="${currency}"
+                          ${
+                            state.settings.currency === currency
+                              ? "selected"
+                              : ""
+                          }
+                        >
+                          ${currency}
+                        </option>
+                      `
+                    )
+                    .join("")}
+                </select>
+              </div>
+
+              <button
+                class="button primary"
+                type="submit"
+              >
+                Enregistrer les paramètres
+              </button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <header class="panel-header">
+              <h2 class="panel-title">
+                Sauvegardes et exports
+              </h2>
+            </header>
+
+            <div class="panel-body">
+              <p
+                style="
+                  color:var(--muted);
+                  margin-bottom:var(--space-4);
+                "
+              >
+                Télécharge régulièrement une sauvegarde complète,
+                particulièrement avant un changement d’appareil.
+              </p>
+
+              <div
+                style="
+                  display:flex;
+                  flex-wrap:wrap;
+                  gap:var(--space-2);
+                "
+              >
+                <button
+                  class="button primary"
+                  id="manualSaveButton"
+                  type="button"
+                >
+                  Enregistrer maintenant
+                </button>
+
+                <button
+                  class="button"
+                  id="exportJsonButton"
+                  type="button"
+                >
+                  Sauvegarde JSON
+                </button>
+
+                <button
+                  class="button"
+                  id="importJsonButton"
+                  type="button"
+                >
+                  Charger JSON
+                </button>
+
+                <button
+                  class="button"
+                  id="exportAllExcelButton"
+                  type="button"
+                >
+                  Export Excel complet
+                </button>
+
+                <button
+                  class="button"
+                  id="settingsXmindButton"
+                  type="button"
+                >
+                  Export XMind
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section
+          class="panel"
+          style="margin-top:var(--space-5)"
+        >
+          <header class="panel-header">
+            <h2 class="panel-title">
+              Créer un volet personnalisé
+            </h2>
+          </header>
+
+          <form
+            class="panel-body"
+            id="customModuleForm"
+          >
+            <div class="form-grid">
+              <div class="field">
+                <label for="customModuleTitle">
+                  Nom du volet
+                </label>
+
+                <input
+                  id="customModuleTitle"
+                  name="title"
+                  placeholder="Ex. Analyses laboratoire"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label for="customModuleIcon">
+                  Icône courte
+                </label>
+
+                <input
+                  id="customModuleIcon"
+                  name="icon"
+                  value="◇"
+                  maxlength="3"
+                >
+              </div>
+
+              <div class="field full">
+                <label for="customModuleDescription">
+                  Description
+                </label>
+
+                <input
+                  id="customModuleDescription"
+                  name="description"
+                  placeholder="Objectif du volet"
+                >
+              </div>
+
+              <div class="field full">
+                <label for="customModuleFields">
+                  Champs — une ligne par champ
+                </label>
+
+                <textarea
+                  id="customModuleFields"
+                  name="fields"
+                  placeholder="Référence|text
+Date|date
+Statut|select|À faire,En cours,Terminé
+Montant|number
+Notes|textarea"
+                  required
+                ></textarea>
+
+                <small style="color:var(--muted)">
+                  Types disponibles : text, number, date,
+                  textarea, select, checkbox, email, tel.
+                  Pour une liste : Label|select|Choix 1,Choix 2.
+                </small>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                class="button primary"
+                type="submit"
+              >
+                Créer le volet
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section
+          class="panel"
+          style="margin-top:var(--space-5)"
+        >
+          <header class="panel-header">
+            <h2 class="panel-title">
+              Gestion des volets
+            </h2>
+          </header>
+
+          ${customModuleListHtml()}
+        </section>
+
+        <section
+          class="panel"
+          style="margin-top:var(--space-5)"
+        >
+          <header class="panel-header">
+            <h2 class="panel-title">
+              Corbeille
+            </h2>
+          </header>
+
+          <div class="panel-body">
+            ${
+              state.trash.length
+                ? state.trash
+                    .map(
+                      (item) => `
+                        <div
+                          style="
+                            display:flex;
+                            align-items:center;
+                            gap:12px;
+                            padding:10px 0;
+                            border-bottom:1px solid var(--divider);
+                          "
+                        >
+                          <div style="flex:1">
+                            <strong>
+                              ${escapeHtml(
+                                item.record.title ||
+                                item.record.reference ||
+                                item.record.name ||
+                                "Élément"
+                              )}
+                            </strong>
+
+                            <small
+                              style="
+                                display:block;
+                                color:var(--muted);
+                              "
+                            >
+                              ${escapeHtml(item.moduleName)}
+                            </small>
+                          </div>
+
+                          <button
+                            class="button small"
+                            data-restore-trash="${item.id}"
+                            type="button"
+                          >
+                            Restaurer
+                          </button>
+                        </div>
+                      `
+                    )
+                    .join("")
+                : `
+                  <div class="empty-state">
+                    <strong>Corbeille vide</strong>
+                  </div>
+                `
+            }
+          </div>
+        </section>
+      `;
+    }
+
+    function renderApplication() {
+      updateInterfaceIdentity();
+      renderCustomNavigation();
+
+      document.querySelectorAll(".nav-button").forEach((button) => {
+        button.classList.toggle(
+          "active",
+          button.dataset.view === currentView
+        );
+      });
+
+      const app = document.getElementById("app");
+
+      if (currentView === "dashboard") {
+        app.innerHTML = renderDashboard();
+      } else if (currentView === "tasks") {
+        app.innerHTML = renderTasksPage();
+      } else if (currentView === "expenses") {
+        app.innerHTML = renderExpensesPage();
+      } else if (currentView === "shipments") {
+        app.innerHTML = renderShipmentsPage();
+      } else if (currentView === "settings") {
+        app.innerHTML = renderSettingsPage();
+      } else {
+        app.innerHTML = renderGenericPage(currentView);
+      }
+
+      const globalSearch = document.getElementById("globalSearch");
+
+      if (globalSearch) {
+        globalSearch.value = filters.search;
+      }
+    }
+
+    function defaultFieldValue(moduleName, field) {
+      if (field.default !== undefined) {
+        return field.default;
+      }
+
+      if (field.name === "date") {
+        return todayIso();
+      }
+
+      if (field.name === "company") {
+        return filters.company !== "ALL"
+          ? filters.company
+          : "SMMIM";
+      }
+
+      if (
+        field.name === "origin" &&
+        moduleName === "road"
+      ) {
+        return state.settings.mine;
+      }
+
+      if (
+        field.name === "destination" &&
+        moduleName === "road"
+      ) {
+        return state.settings.depot;
+      }
+
+      if (
+        field.name === "origin" &&
+        moduleName === "stock"
+      ) {
+        return state.settings.mine;
+      }
+
+      if (
+        field.name === "location" &&
+        moduleName === "stock"
+      ) {
+        return state.settings.depot;
+      }
+
+      if (
+        field.name === "port" &&
+        moduleName === "shipments"
+      ) {
+        return state.settings.port;
+      }
+
+      if (field.name === "currency") {
+        return state.settings.currency;
+      }
+
+      return "";
+    }
+
+    function fieldControlHtml(moduleName, field, record) {
+      const stored =
+        record && record[field.name] !== undefined
+          ? record[field.name]
+          : defaultFieldValue(moduleName, field);
+
+      const required = field.required ? "required" : "";
+      const full = field.full ? "field full" : "field";
+      const min = field.min !== undefined
+        ? `min="${field.min}"`
+        : "";
+      const max = field.max !== undefined
+        ? `max="${field.max}"`
+        : "";
+      const step = field.step !== undefined
+        ? `step="${field.step}"`
+        : "";
+
+      if (field.type === "textarea") {
+        return `
+          <div class="${full}">
+            <label for="field-${field.name}">
+              ${escapeHtml(field.label)}
+            </label>
+
+            <textarea
+              id="field-${field.name}"
+              name="${field.name}"
+              ${required}
+            >${escapeHtml(stored)}</textarea>
+          </div>
+        `;
+      }
+
+      if (field.type === "select") {
+        return `
+          <div class="${full}">
+            <label for="field-${field.name}">
+              ${escapeHtml(field.label)}
+            </label>
+
+            <select
+              id="field-${field.name}"
+              name="${field.name}"
+              ${required}
+            >
+              ${(field.options || [])
+                .map(
+                  (option) => `
+                    <option
+                      value="${escapeHtml(option)}"
+                      ${
+                        String(stored) === String(option)
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      ${escapeHtml(option)}
+                    </option>
+                  `
+                )
+                .join("")}
+            </select>
+          </div>
+        `;
+      }
+
+      if (field.type === "checkbox") {
+        return `
+          <div class="${full}">
+            <label
+              style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                min-height:44px;
+              "
+            >
+              <input
+                name="${field.name}"
+                type="checkbox"
+                value="true"
+                ${stored ? "checked" : ""}
+                style="
+                  width:19px;
+                  height:19px;
+                  accent-color:var(--primary);
+                "
+              >
+
+              ${escapeHtml(field.label)}
+            </label>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="${full}">
+          <label for="field-${field.name}">
+            ${escapeHtml(field.label)}
+          </label>
+
+          <input
+            id="field-${field.name}"
+            name="${field.name}"
+            type="${escapeHtml(field.type || "text")}"
+            value="${escapeHtml(stored)}"
+            ${required}
+            ${min}
+            ${max}
+            ${step}
+          >
+        </div>
+      `;
+    }
+
+    function openEditor(moduleName, recordId = null) {
+      const definition = moduleDefinition(moduleName);
+
+      if (!definition) {
+        showToast("Module introuvable", true);
+        return;
+      }
+
+      currentEditorModule = moduleName;
+      currentEditorId = recordId;
+
+      const record = recordId
+        ? moduleItems(moduleName).find(
+            (item) => item.id === recordId
+          )
+        : null;
+
+      document.getElementById("editorTitle").textContent =
+        recordId
+          ? `Modifier ${definition.singular || "l’élément"}`
+          : `Ajouter ${definition.singular || "un élément"}`;
+
+      document.getElementById("editorFields").innerHTML =
+        (definition.fields || [])
+          .map((field) =>
+            fieldControlHtml(moduleName, field, record)
+          )
+          .join("");
+
+      document
+        .getElementById("editorBackdrop")
+        .classList.add("open");
+
+      document.body.style.overflow = "hidden";
+
+      setTimeout(() => {
+        document.querySelector(
+          "#editorFields input, #editorFields select, #editorFields textarea"
+        )?.focus();
+      }, 30);
+    }
+
+    function closeEditor() {
+      document
+        .getElementById("editorBackdrop")
+        .classList.remove("open");
+
+      document.body.style.overflow = "";
+      currentEditorModule = null;
+      currentEditorId = null;
+    }
+
+    async function submitEditor(event) {
+      event.preventDefault();
+
+      const definition = moduleDefinition(
+        currentEditorModule
+      );
+
+      if (!definition) {
+        return;
+      }
+
+      const formData = new FormData(event.currentTarget);
+      const values = {};
+
+      definition.fields.forEach((field) => {
+        if (field.type === "checkbox") {
+          values[field.name] =
+            formData.get(field.name) === "true";
+          return;
+        }
+
+        let value = formData.get(field.name);
+
+        if (field.type === "number") {
+          value =
+            value === "" || value === null
+              ? ""
+              : Number(value);
+        }
+
+        values[field.name] = value;
+      });
+
+      const records = moduleItems(currentEditorModule);
+      const now = new Date().toISOString();
+
+      if (currentEditorId) {
+        const index = records.findIndex(
+          (record) => record.id === currentEditorId
+        );
+
+        if (index >= 0) {
+          records[index] = {
+            ...records[index],
+            ...values,
+            updatedAt: now
+          };
+
+          addActivity(
+            "Modification",
+            currentEditorModule,
+            records[index]
+          );
+        }
+      } else {
+        const record = {
+          id: createId(),
+          ...values,
+          attachments: [],
+          history: [],
+          createdAt: now,
+          updatedAt: now
+        };
+
+        records.push(record);
+
+        addActivity(
+          "Création",
+          currentEditorModule,
+          record
+        );
+      }
+
+      setModuleItems(currentEditorModule, records);
+
+      closeEditor();
+      await saveApplicationState("Enregistrement sauvegardé");
+      renderApplication();
+    }
+
+    function generateNextRecurringTask(task) {
+      if (
+        !task.recurrence ||
+        task.recurrence === "Aucune" ||
+        !task.dueDate
+      ) {
+        return null;
+      }
+
+      const date = new Date(`${task.dueDate}T12:00:00`);
+
+      if (task.recurrence === "Quotidienne") {
+        date.setDate(date.getDate() + 1);
+      }
+
+      if (task.recurrence === "Hebdomadaire") {
+        date.setDate(date.getDate() + 7);
+      }
+
+      if (task.recurrence === "Mensuelle") {
+        date.setMonth(date.getMonth() + 1);
+      }
+
+      if (task.recurrence === "Trimestrielle") {
+        date.setMonth(date.getMonth() + 3);
+      }
+
+      if (task.recurrence === "Annuelle") {
+        date.setFullYear(date.getFullYear() + 1);
+      }
+
+      return {
+        ...deepClone(task),
+        id: createId(),
+        status: "À faire",
+        progress: 0,
+        dueDate: date.toISOString().slice(0, 10),
+        completedAt: "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        attachments: []
+      };
+    }
+
+    async function completeTask(taskId) {
+      const task = state.data.tasks.find(
+        (record) => record.id === taskId
+      );
+
+      if (!task) {
+        return;
+      }
+
+      task.status = "Terminée";
+      task.progress = 100;
+      task.completedAt = new Date().toISOString();
+      task.updatedAt = new Date().toISOString();
+
+      const nextTask = generateNextRecurringTask(task);
+
+      if (nextTask) {
+        state.data.tasks.push(nextTask);
+        addActivity(
+          "Occurrence récurrente créée",
+          "tasks",
+          nextTask
+        );
+      }
+
+      addActivity("Tâche terminée", "tasks", task);
+
+      await saveApplicationState("Tâche terminée");
+      renderApplication();
+    }
+
+    async function duplicateRecord(moduleName, recordId) {
+      const records = moduleItems(moduleName);
+      const source = records.find(
+        (record) => record.id === recordId
+      );
+
+      if (!source) {
+        return;
+      }
+
+      const copy = deepClone(source);
+
+      copy.id = createId();
+      copy.createdAt = new Date().toISOString();
+      copy.updatedAt = copy.createdAt;
+      copy.attachments = [];
+
+      if (copy.title) {
+        copy.title += " — Copie";
+      }
+
+      if (copy.reference) {
+        copy.reference += " — COPIE";
+      }
+
+      records.push(copy);
+      setModuleItems(moduleName, records);
+
+      addActivity("Duplication", moduleName, copy);
+
+      await saveApplicationState("Élément dupliqué");
+      renderApplication();
+    }
+
+    async function deleteRecord(moduleName, recordId) {
+      const records = moduleItems(moduleName);
+      const record = records.find(
+        (item) => item.id === recordId
+      );
+
+      if (!record) {
+        return;
+      }
+
+      const label =
+        record.title ||
+        record.reference ||
+        record.name ||
+        record.label ||
+        "cet élément";
+
+      if (
+        !window.confirm(
+          `Déplacer « ${label} » dans la corbeille ?`
+        )
+      ) {
+        return;
+      }
+
+      state.trash.unshift({
+        id: createId(),
+        moduleName,
+        record: deepClone(record),
+        deletedAt: new Date().toISOString()
+      });
+
+      setModuleItems(
+        moduleName,
+        records.filter((item) => item.id !== recordId)
+      );
+
+      addActivity("Suppression", moduleName, record);
+
+      await saveApplicationState(
+        "Élément déplacé dans la corbeille"
+      );
+
+      renderApplication();
+    }
+
+    async function restoreTrashItem(trashId) {
+      const item = state.trash.find(
+        (candidate) => candidate.id === trashId
+      );
+
+      if (!item) {
+        return;
+      }
+
+      const records = moduleItems(item.moduleName);
+
+      records.push({
+        ...item.record,
+        updatedAt: new Date().toISOString()
+      });
+
+      setModuleItems(item.moduleName, records);
+
+      state.trash = state.trash.filter(
+        (candidate) => candidate.id !== trashId
+      );
+
+      addActivity(
+        "Restauration",
+        item.moduleName,
+        item.record
+      );
+
+      await saveApplicationState("Élément restauré");
+      renderApplication();
+    }
+
+    function downloadBlob(content, filename, type) {
+      const blob =
+        content instanceof Blob
+          ? content
+          : new Blob([content], { type });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = filename;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 1000);
+    }
+
+    function csvEscape(value) {
+      return `"${String(value ?? "").replaceAll(
+        '"',
+        '""'
+      )}"`;
+    }
+
+    function exportModuleCsv(moduleName) {
+      const definition = moduleDefinition(moduleName);
+      const records = getFilteredItems(moduleName);
+
+      if (!definition || !records.length) {
+        showToast("Aucune donnée à exporter", true);
+        return;
+      }
+
+      const lines = [];
+
+      lines.push(
+        definition.fields
+          .map((field) => csvEscape(field.label))
+          .join(";")
+      );
+
+      records.forEach((record) => {
+        lines.push(
+          definition.fields
+            .map((field) => {
+              let value = record[field.name];
+
+              if (field.type === "checkbox") {
+                value = value ? "Oui" : "Non";
+              }
+
+              return csvEscape(value);
+            })
+            .join(";")
+        );
+      });
+
+      downloadBlob(
+        "\uFEFF" + lines.join("\n"),
+        `${moduleName}-${todayIso()}.csv`,
+        "text/csv;charset=utf-8"
+      );
+
+      showToast("Export CSV téléchargé");
+    }
+
+    function exportModuleExcel(moduleName) {
+      if (!window.XLSX) {
+        showToast(
+          "La bibliothèque Excel n’est pas encore chargée",
+          true
+        );
+        return;
+      }
+
+      const definition = moduleDefinition(moduleName);
+      const records = getFilteredItems(moduleName);
+
+      if (!definition || !records.length) {
+        showToast("Aucune donnée à exporter", true);
+        return;
+      }
+
+      const rows = records.map((record) => {
+        const row = {};
+
+        definition.fields.forEach((field) => {
+          row[field.label] =
+            field.type === "checkbox"
+              ? record[field.name]
+                ? "Oui"
+                : "Non"
+              : record[field.name] ?? "";
+        });
+
+        return row;
+      });
+
+      const workbook = XLSX.utils.book_new();
+      const sheet = XLSX.utils.json_to_sheet(rows);
+
+      XLSX.utils.book_append_sheet(
+        workbook,
+        sheet,
+        definition.title.slice(0, 31)
+      );
+
+      XLSX.writeFile(
+        workbook,
+        `${moduleName}-${todayIso()}.xlsx`
+      );
+
+      showToast("Export Excel téléchargé");
+    }
+
+    function exportAllExcel() {
+      if (!window.XLSX) {
+        showToast(
+          "La bibliothèque Excel n’est pas encore chargée",
+          true
+        );
+        return;
+      }
+
+      const workbook = XLSX.utils.book_new();
+
+      Object.keys(MODULES).forEach((moduleName) => {
+        const definition = MODULES[moduleName];
+        const records = moduleItems(moduleName);
+
+        const rows = records.map((record) => {
+          const row = {};
+
+          definition.fields.forEach((field) => {
+            row[field.label] =
+              field.type === "checkbox"
+                ? record[field.name]
+                  ? "Oui"
+                  : "Non"
+                : record[field.name] ?? "";
+          });
+
+          return row;
+        });
+
+        const sheet = XLSX.utils.json_to_sheet(rows);
+
+        XLSX.utils.book_append_sheet(
+          workbook,
+          sheet,
+          definition.title.slice(0, 31)
+        );
+      });
+
+      state.customModules.forEach((module) => {
+        const rows = moduleItems(module.id).map((record) => {
+          const row = {};
+
+          module.fields.forEach((field) => {
+            row[field.label] =
+              field.type === "checkbox"
+                ? record[field.name]
+                  ? "Oui"
+                  : "Non"
+                : record[field.name] ?? "";
+          });
+
+          return row;
+        });
+
+        const sheet = XLSX.utils.json_to_sheet(rows);
+
+        XLSX.utils.book_append_sheet(
+          workbook,
+          sheet,
+          module.title.slice(0, 31)
+        );
+      });
+
+      XLSX.writeFile(
+        workbook,
+        `pilotage-operationnel-${todayIso()}.xlsx`
+      );
+
+      showToast("Export Excel complet téléchargé");
+    }
+
+    function exportJson() {
+      const content = JSON.stringify(state, null, 2);
+
+      downloadBlob(
+        content,
+        `pilotage-operationnel-${todayIso()}.json`,
+        "application/json;charset=utf-8"
+      );
+
+      showToast("Sauvegarde JSON téléchargée");
+    }
+
+    function xmlEscape(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&apos;");
+    }
+
+    function tasksForMindMap() {
+      return state.data.tasks
+        .filter((task) => {
+          if (
+            filters.company !== "ALL" &&
+            task.company !== filters.company
+          ) {
+            return false;
+          }
+
+          return true;
+        })
+        .sort((a, b) => {
+          return taskUrgencyScore(b) - taskUrgencyScore(a);
+        });
+    }
+
+    function exportXmindMarkdown() {
+      const tasks = tasksForMindMap();
+
+      const grouped = {};
+
+      tasks.forEach((task) => {
+        const company = getCompanyName(
+          task.company || "Sans domaine"
+        );
+
+        if (!grouped[company]) {
+          grouped[company] = {};
+        }
+
+        const status = task.status || "Sans statut";
+
+        if (!grouped[company][status]) {
+          grouped[company][status] = [];
+        }
+
+        grouped[company][status].push(task);
+      });
+
+      let markdown = "# Pilotage opérationnel\n\n";
+
+      Object.entries(grouped).forEach(
+        ([company, statuses]) => {
+          markdown += `## ${company}\n\n`;
+
+          Object.entries(statuses).forEach(
+            ([status, tasksByStatus]) => {
+              markdown += `### ${status}\n\n`;
+
+              tasksByStatus.forEach((task) => {
+                markdown += `- ${task.title}\n`;
+                markdown += `  - Priorité : ${
+                  task.priority || "Non définie"
+                }\n`;
+                markdown += `  - Responsable : ${
+                  task.owner || "Non défini"
+                }\n`;
+                markdown += `  - Échéance : ${
+                  task.dueDate || "Non définie"
+                }\n`;
+                markdown += `  - Projet : ${
+                  task.project || "Non défini"
+                }\n`;
+                markdown += `  - Avancement : ${
+                  task.progress || 0
+                }%\n`;
+
+                if (task.nextAction) {
+                  markdown += `  - Prochaine action : ${task.nextAction}\n`;
+                }
+
+                if (task.blocker) {
+                  markdown += `  - Blocage : ${task.blocker}\n`;
+                }
+
+                if (task.checklist) {
+                  markdown += "  - Sous-tâches\n";
+
+                  task.checklist
+                    .split("\n")
+                    .filter(Boolean)
+                    .forEach((line) => {
+                      markdown += `    - ${line}\n`;
+                    });
+                }
+
+                if (attachmentCount(task)) {
+                  markdown += `  - Pièces jointes : ${attachmentCount(
+                    task
+                  )}\n`;
+                }
+              });
+
+              markdown += "\n";
+            }
+          );
+        }
+      );
+
+      downloadBlob(
+        markdown,
+        `pilotage-xmind-${todayIso()}.md`,
+        "text/markdown;charset=utf-8"
+      );
+
+      showToast("Export XMind Markdown téléchargé");
+    }
+
+    function exportOpml() {
+      const tasks = tasksForMindMap();
+
+      const grouped = {};
+
+      tasks.forEach((task) => {
+        const company = getCompanyName(
+          task.company || "Sans domaine"
+        );
+
+        if (!grouped[company]) {
+          grouped[company] = [];
+        }
+
+        grouped[company].push(task);
+      });
+
+      let body = "";
+
+      Object.entries(grouped).forEach(
+        ([company, companyTasks]) => {
+          body += `<outline text="${xmlEscape(company)}">`;
+
+          companyTasks.forEach((task) => {
+            const note = [
+              `Statut: ${task.status || ""}`,
+              `Priorité: ${task.priority || ""}`,
+              `Responsable: ${task.owner || ""}`,
+              `Échéance: ${task.dueDate || ""}`,
+              `Projet: ${task.project || ""}`
+            ].join(" | ");
+
+            body += `
+              <outline
+                text="${xmlEscape(task.title)}"
+                _note="${xmlEscape(note)}"
+              />
+            `;
+          });
+
+          body += "</outline>";
+        }
+      );
+
+      const opml = `<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>Pilotage opérationnel</title>
+  </head>
+  <body>
+    <outline text="Pilotage opérationnel">
+      ${body}
+    </outline>
+  </body>
+</opml>`;
+
+      downloadBlob(
+        opml,
+        `pilotage-operationnel-${todayIso()}.opml`,
+        "text/x-opml;charset=utf-8"
+      );
+
+      showToast("Export OPML téléchargé");
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function addAttachments(files) {
+      if (
+        !attachmentTarget ||
+        !files ||
+        !files.length
+      ) {
+        return;
+      }
+
+      const records = moduleItems(
+        attachmentTarget.moduleName
+      );
+
+      const record = records.find(
+        (candidate) =>
+          candidate.id === attachmentTarget.recordId
+      );
+
+      if (!record) {
+        return;
+      }
+
+      if (!Array.isArray(record.attachments)) {
+        record.attachments = [];
+      }
+
+      for (const file of files) {
+        if (file.size > 8 * 1024 * 1024) {
+          showToast(
+            `${file.name} dépasse la limite de 8 Mo`,
+            true
+          );
+          continue;
+        }
+
+        try {
+          const data = await readFileAsDataUrl(file);
+
+          record.attachments.push({
+            id: createId(),
+            name: file.name,
+            type: file.type || "application/octet-stream",
+            size: file.size,
+            data,
+            createdAt: new Date().toISOString()
+          });
+        } catch (error) {
+          console.error(error);
+          showToast(
+            `Impossible d’ajouter ${file.name}`,
+            true
+          );
+        }
+      }
+
+      record.updatedAt = new Date().toISOString();
+
+      addActivity(
+        "Ajout de pièces jointes",
+        attachmentTarget.moduleName,
+        record
+      );
+
+      await saveApplicationState(
+        "Pièces jointes enregistrées"
+      );
+
+      renderApplication();
+    }
+
+    function openAttachmentPicker(
+      moduleName,
+      recordId,
+      camera = false
+    ) {
+      attachmentTarget = {
+        moduleName,
+        recordId
+      };
+
+      const input = camera
+        ? document.getElementById("cameraInput")
+        : document.getElementById("attachmentInput");
+
+      input.value = "";
+      input.click();
+    }
+
+    function downloadAttachment(
+      moduleName,
+      recordId,
+      attachmentId
+    ) {
+      const record = moduleItems(moduleName).find(
+        (candidate) => candidate.id === recordId
+      );
+
+      const attachment = record?.attachments?.find(
+        (candidate) => candidate.id === attachmentId
+      );
+
+      if (!attachment) {
+        return;
+      }
+
+      const link = document.createElement("a");
+
+      link.href = attachment.data;
+      link.download = attachment.name;
+      link.click();
+    }
+
+    async function removeAttachment(
+      moduleName,
+      recordId,
+      attachmentId
+    ) {
+      const record = moduleItems(moduleName).find(
+        (candidate) => candidate.id === recordId
+      );
+
+      if (!record) {
+        return;
+      }
+
+      record.attachments = (record.attachments || []).filter(
+        (attachment) => attachment.id !== attachmentId
+      );
+
+      await saveApplicationState("Pièce jointe supprimée");
+      renderApplication();
+    }
+
+    async function importJsonFile(file) {
+      if (!file) {
+        return;
+      }
+
+      const text = await file.text();
+
+      try {
+        const parsed = JSON.parse(text);
+
+        if (
+          !window.confirm(
+            "La sauvegarde chargée remplacera les données actuelles. Continuer ?"
+          )
+        ) {
+          return;
+        }
+
+        state = mergeState(parsed);
+
+        await saveApplicationState(
+          "Sauvegarde restaurée"
+        );
+
+        renderApplication();
+      } catch (error) {
+        console.error(error);
+        showToast("Fichier JSON invalide", true);
+      }
+    }
+
+    function normalizeHeader(value) {
+      return normalizeText(value)
+        .replaceAll(" ", "")
+        .replaceAll("_", "")
+        .replaceAll("-", "");
+    }
+
+    async function importTasksFile(file) {
+      if (!file) {
+        return;
+      }
+
+      if (!window.XLSX) {
+        showToast(
+          "La bibliothèque Excel n’est pas disponible",
+          true
+        );
+        return;
+      }
+
+      try {
+        const buffer = await file.arrayBuffer();
+        const workbook = XLSX.read(buffer, {
+          type: "array"
+        });
+
+        const sheet =
+          workbook.Sheets[workbook.SheetNames[0]];
+
+        const rows = XLSX.utils.sheet_to_json(
+          sheet,
+          {
+            defval: ""
+          }
+        );
+
+        if (!rows.length) {
+          showToast("Le fichier ne contient aucune ligne", true);
+          return;
+        }
+
+        const mapping = {
+          titre: "title",
+          tache: "title",
+          description: "description",
+          societe: "company",
+          domaine: "company",
+          projet: "project",
+          categorie: "category",
+          priorite: "priority",
+          statut: "status",
+          responsable: "owner",
+          deleguea: "assignedTo",
+          echeance: "dueDate",
+          datedebut: "startDate",
+          rappel: "reminder",
+          avancement: "progress",
+          recurrence: "recurrence",
+          notes: "notes"
+        };
+
+        let imported = 0;
+
+        rows.forEach((row) => {
+          const task = {
+            id: createId(),
+            title: "",
+            company: "SMMIM",
+            priority: "Normale",
+            status: "À faire",
+            progress: 0,
+            recurrence: "Aucune",
+            attachments: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+
+          Object.entries(row).forEach(
+            ([header, value]) => {
+              const normalized = normalizeHeader(header);
+              const target = mapping[normalized];
+
+              if (target) {
+                task[target] = value;
+              }
+            }
+          );
+
+          if (task.title) {
+            task.progress = Number(task.progress || 0);
+            state.data.tasks.push(task);
+            imported += 1;
+          }
+        });
+
+        await saveApplicationState(
+          `${imported} tâche(s) importée(s)`
+        );
+
+        renderApplication();
+      } catch (error) {
+        console.error(error);
+        showToast(
+          "Impossible de lire le fichier Excel/CSV",
+          true
+        );
+      }
+    }
+
+    function parseCustomFields(text) {
+      return String(text || "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line, index) => {
+          const [labelRaw, typeRaw, optionsRaw] =
+            line.split("|");
+
+          const label =
+            labelRaw?.trim() || `Champ ${index + 1}`;
+
+          const type =
+            typeRaw?.trim().toLowerCase() || "text";
+
+          const name =
+            normalizeText(label)
+              .replace(/[^a-z0-9]+/g, "_")
+              .replace(/^_+|_+$/g, "") ||
+            `champ_${index + 1}`;
+
+          const field = {
+            name,
+            label,
+            type,
+            full: ["textarea"].includes(type)
+          };
+
+          if (type === "select") {
+            field.options = String(optionsRaw || "")
+              .split(",")
+              .map((option) => option.trim())
+              .filter(Boolean);
+          }
+
+          if (type === "number") {
+            field.step = "0.01";
+          }
+
+          return field;
+        });
+    }
+
+    async function createCustomModule(event) {
+      event.preventDefault();
+
+      const data = new FormData(event.currentTarget);
+      const title = String(data.get("title") || "").trim();
+
+      if (!title) {
+        return;
+      }
+
+      let id =
+        "custom_" +
+        normalizeText(title)
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "");
+
+      if (
+        BUILTIN_VIEWS.includes(id) ||
+        state.customModules.some(
+          (module) => module.id === id
+        )
+      ) {
+        id += "_" + Date.now().toString(36);
+      }
+
+      const fields = parseCustomFields(
+        data.get("fields")
+      );
+
+      if (!fields.length) {
+        showToast(
+          "Ajoute au moins un champ au volet",
+          true
+        );
+        return;
+      }
+
+      const firstField = fields[0];
+
+      state.customModules.push({
+        id,
+        title,
+        icon: String(data.get("icon") || "◇").trim(),
+        description: String(
+          data.get("description") || ""
+        ).trim(),
+        singular: "un élément",
+        fields,
+        columns: fields
+          .slice(0, 7)
+          .map((field) => ({
+            key: field.name,
+            label: field.label
+          })),
+        hidden: false
+      });
+
+      state.customData[id] = [];
+
+      await saveApplicationState("Volet créé");
+      event.currentTarget.reset();
+      renderApplication();
+    }
+
+    async function editCustomModule(id) {
+      const module = state.customModules.find(
+        (candidate) => candidate.id === id
+      );
+
+      if (!module) {
+        return;
+      }
+
+      const title = window.prompt(
+        "Nouveau nom du volet :",
+        module.title
+      );
+
+      if (!title) {
+        return;
+      }
+
+      const description = window.prompt(
+        "Description :",
+        module.description || ""
+      );
+
+      module.title = title.trim();
+      module.description = String(
+        description ?? module.description
+      ).trim();
+
+      await saveApplicationState("Volet modifié");
+      renderApplication();
+    }
+
+    async function editCustomFields(id) {
+      const module = state.customModules.find(
+        (candidate) => candidate.id === id
+      );
+
+      if (!module) {
+        return;
+      }
+
+      const current = module.fields
+        .map((field) => {
+          const options =
+            field.type === "select"
+              ? `|${(field.options || []).join(",")}`
+              : "";
+
+          return `${field.label}|${field.type}${options}`;
+        })
+        .join("\n");
+
+      const result = window.prompt(
+        "Modifie les champs, une ligne par champ :",
+        current
+      );
+
+      if (!result) {
+        return;
+      }
+
+      const fields = parseCustomFields(result);
+
+      if (!fields.length) {
+        return;
+      }
+
+      module.fields = fields;
+      module.columns = fields
+        .slice(0, 7)
+        .map((field) => ({
+          key: field.name,
+          label: field.label
+        }));
+
+      await saveApplicationState("Champs modifiés");
+      renderApplication();
+    }
+
+    async function moveCustomModule(id, direction) {
+      const index = state.customModules.findIndex(
+        (module) => module.id === id
+      );
+
+      if (index < 0) {
+        return;
+      }
+
+      const target = index + direction;
+
+      if (
+        target < 0 ||
+        target >= state.customModules.length
+      ) {
+        return;
+      }
+
+      const temporary = state.customModules[index];
+
+      state.customModules[index] =
+        state.customModules[target];
+
+      state.customModules[target] = temporary;
+
+      await saveApplicationState("Ordre des volets modifié");
+      renderApplication();
+    }
+
+    async function toggleCustomModule(id) {
+      const module = state.customModules.find(
+        (candidate) => candidate.id === id
+      );
+
+      if (!module) {
+        return;
+      }
+
+      module.hidden = !module.hidden;
+
+      await saveApplicationState(
+        module.hidden
+          ? "Volet masqué"
+          : "Volet affiché"
+      );
+
+      renderApplication();
+    }
+
+    async function deleteCustomModule(id) {
+      const module = state.customModules.find(
+        (candidate) => candidate.id === id
+      );
+
+      if (!module) {
+        return;
+      }
+
+      if (
+        !window.confirm(
+          `Supprimer le volet « ${module.title} » et ses données ?`
+        )
+      ) {
+        return;
+      }
+
+      state.customModules =
+        state.customModules.filter(
+          (candidate) => candidate.id !== id
+        );
+
+      delete state.customData[id];
+
+      if (currentView === id) {
+        currentView = "dashboard";
+      }
+
+      await saveApplicationState("Volet supprimé");
+      renderApplication();
+    }
+
+    async function saveSettings(event) {
+      event.preventDefault();
+
+      const data = new FormData(event.currentTarget);
+
+      state.settings.appName =
+        String(data.get("appName") || "").trim() ||
+        "Pilotage opérationnel";
+
+      state.settings.smmimName =
+        String(data.get("smmimName") || "").trim() ||
+        "SMMIM";
+
+      state.settings.ydmName =
+        String(data.get("ydmName") || "").trim() ||
+        "YDM";
+
+      state.settings.mine =
+        String(data.get("mine") || "").trim();
+
+      state.settings.depot =
+        String(data.get("depot") || "").trim();
+
+      state.settings.port =
+        String(data.get("port") || "").trim();
+
+      state.settings.currency =
+        String(data.get("currency") || "MAD");
+
+      await saveApplicationState("Paramètres enregistrés");
+      renderApplication();
+    }
+
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("button");
+
+      if (!button) {
+        return;
+      }
+
+      if (button.dataset.view) {
+        navigateTo(button.dataset.view);
+        return;
+      }
+
+      if (button.dataset.viewTarget) {
+        navigateTo(button.dataset.viewTarget);
+        return;
+      }
+
+      if (button.dataset.add) {
+        openEditor(button.dataset.add);
+        return;
+      }
+
+      if (button.dataset.editModule) {
+        openEditor(
+          button.dataset.editModule,
+          button.dataset.editId
+        );
+        return;
+      }
+
+      if (button.dataset.duplicateModule) {
+        await duplicateRecord(
+          button.dataset.duplicateModule,
+          button.dataset.duplicateId
+        );
+        return;
+      }
+
+      if (button.dataset.deleteModule) {
+        await deleteRecord(
+          button.dataset.deleteModule,
+          button.dataset.deleteId
+        );
+        return;
+      }
+
+      if (button.dataset.completeTask) {
+        await completeTask(
+          button.dataset.completeTask
+        );
+        return;
+      }
+
+      if (button.dataset.taskTab) {
+        currentTaskTab = button.dataset.taskTab;
+        renderApplication();
+        return;
+      }
+
+      if (button.dataset.exportCsv) {
+        exportModuleCsv(button.dataset.exportCsv);
+        return;
+      }
+
+      if (button.dataset.exportExcel) {
+        exportModuleExcel(
+          button.dataset.exportExcel
+        );
+        return;
+      }
+
+      if (button.dataset.attachmentModule) {
+        openAttachmentPicker(
+          button.dataset.attachmentModule,
+          button.dataset.attachmentId,
+          false
+        );
+        return;
+      }
+
+      if (button.dataset.downloadAttachment) {
+        downloadAttachment(
+          button.dataset.attachmentModuleName,
+          button.dataset.attachmentRecordId,
+          button.dataset.downloadAttachment
+        );
+        return;
+      }
+
+      if (button.dataset.removeAttachment) {
+        await removeAttachment(
+          button.dataset.attachmentModuleName,
+          button.dataset.attachmentRecordId,
+          button.dataset.removeAttachment
+        );
+        return;
+      }
+
+      if (button.dataset.restoreTrash) {
+        await restoreTrashItem(
+          button.dataset.restoreTrash
+        );
+        return;
+      }
+
+      if (button.dataset.customUp) {
+        await moveCustomModule(
+          button.dataset.customUp,
+          -1
+        );
+        return;
+      }
+
+      if (button.dataset.customDown) {
+        await moveCustomModule(
+          button.dataset.customDown,
+          1
+        );
+        return;
+      }
+
+      if (button.dataset.customEdit) {
+        await editCustomModule(
+          button.dataset.customEdit
+        );
+        return;
+      }
+
+      if (button.dataset.customFields) {
+        await editCustomFields(
+          button.dataset.customFields
+        );
+        return;
+      }
+
+      if (button.dataset.customToggle) {
+        await toggleCustomModule(
+          button.dataset.customToggle
+        );
+        return;
+      }
+
+      if (button.dataset.customDelete) {
+        await deleteCustomModule(
+          button.dataset.customDelete
+        );
+        return;
+      }
+
+      if (button.hasAttribute("data-print")) {
+        window.print();
+        return;
+      }
+
+      if (button.id === "resetFiltersButton") {
+        resetFilters();
+        return;
+      }
+
+      if (button.id === "importTasksButton") {
+        document.getElementById(
+          "excelImportInput"
+        ).click();
+        return;
+      }
+
+      if (
+        button.id === "exportXmindButton" ||
+        button.id === "settingsXmindButton"
+      ) {
+        exportXmindMarkdown();
+        return;
+      }
+
+      if (button.id === "exportOpmlButton") {
+        exportOpml();
+        return;
+      }
+
+      if (button.id === "manualSaveButton") {
+        await saveApplicationState(
+          "Toutes les données sont enregistrées"
+        );
+        return;
+      }
+
+      if (button.id === "exportJsonButton") {
+        exportJson();
+        return;
+      }
+
+      if (button.id === "importJsonButton") {
+        document.getElementById(
+          "jsonImportInput"
+        ).click();
+        return;
+      }
+
+      if (button.id === "exportAllExcelButton") {
+        exportAllExcel();
+      }
+    });
+
+    document.addEventListener("change", (event) => {
+      if (event.target.id === "companyFilter") {
+        filters.company = event.target.value;
+        renderApplication();
+      }
+
+      if (event.target.id === "statusFilter") {
+        filters.status = event.target.value;
+        renderApplication();
+      }
+
+      if (event.target.id === "projectFilter") {
+        filters.project = event.target.value;
+        renderApplication();
+      }
+    });
+
+    document.addEventListener("input", (event) => {
+      if (event.target.id === "moduleSearch") {
+        filters.search = event.target.value;
+
+        const position =
+          event.target.selectionStart || 0;
+
+        renderApplication();
+
+        requestAnimationFrame(() => {
+          const input =
+            document.getElementById("moduleSearch");
+
+          if (input) {
+            input.focus();
+            input.setSelectionRange(
+              position,
+              position
+            );
+          }
+        });
+      }
+    });
+
+    document.addEventListener("submit", async (event) => {
+      if (event.target.id === "settingsForm") {
+        await saveSettings(event);
+      }
+
+      if (event.target.id === "customModuleForm") {
+        await createCustomModule(event);
+      }
+    });
+
+    document
+      .getElementById("editorForm")
+      .addEventListener("submit", submitEditor);
+
+    document
+      .getElementById("closeEditorButton")
+      .addEventListener("click", closeEditor);
+
+    document
+      .getElementById("cancelEditorButton")
+      .addEventListener("click", closeEditor);
+
+    document
+      .getElementById("editorBackdrop")
+      .addEventListener("click", (event) => {
+        if (event.target.id === "editorBackdrop") {
+          closeEditor();
+        }
+      });
+
+    document
+      .getElementById("mobileMenuButton")
+      .addEventListener("click", () => {
+        document
+          .getElementById("sidebar")
+          .classList.toggle("open");
+      });
+
+    document
+      .getElementById("themeButton")
+      .addEventListener("click", async () => {
+        state.settings.theme =
+          state.settings.theme === "dark"
+            ? "light"
+            : "dark";
+
+        await saveApplicationState("");
+        renderApplication();
+      });
+
+    document
+      .getElementById("quickAddButton")
+      .addEventListener("click", () => {
+        const target =
+          moduleDefinition(currentView)
+            ? currentView
+            : "tasks";
+
+        openEditor(target);
+      });
+
+    document
+      .getElementById("floatingAddButton")
+      .addEventListener("click", () => {
+        const target =
+          moduleDefinition(currentView)
+            ? currentView
+            : "tasks";
+
+        openEditor(target);
+      });
+
+    document
+      .getElementById("globalSearch")
+      .addEventListener("input", (event) => {
+        filters.search = event.target.value;
+
+        if (
+          currentView === "dashboard" ||
+          currentView === "settings"
+        ) {
+          currentView = "tasks";
+          window.location.hash = "tasks";
+        }
+
+        renderApplication();
+
+        requestAnimationFrame(() => {
+          const input =
+            document.getElementById("globalSearch");
+
+          if (input) {
+            input.focus();
+
+            input.setSelectionRange(
+              filters.search.length,
+              filters.search.length
+            );
+          }
+        });
+      });
+
+    document
+      .getElementById("attachmentInput")
+      .addEventListener("change", async (event) => {
+        await addAttachments(
+          Array.from(event.target.files || [])
+        );
+
+        event.target.value = "";
+      });
+
+    document
+      .getElementById("cameraInput")
+      .addEventListener("change", async (event) => {
+        await addAttachments(
+          Array.from(event.target.files || [])
+        );
+
+        event.target.value = "";
+      });
+
+    document
+      .getElementById("jsonImportInput")
+      .addEventListener("change", async (event) => {
+        await importJsonFile(
+          event.target.files?.[0]
+        );
+
+        event.target.value = "";
+      });
+
+    document
+      .getElementById("excelImportInput")
+      .addEventListener("change", async (event) => {
+        await importTasksFile(
+          event.target.files?.[0]
+        );
+
+        event.target.value = "";
+      });
+
+    window.addEventListener("hashchange", () => {
+      const view =
+        window.location.hash.replace("#", "");
+
+      if (view) {
+        currentView = view;
+        resetFilters(false);
+        renderApplication();
+      }
+    });
+
+    window.addEventListener("keydown", async (event) => {
+      if (event.key === "Escape") {
+        closeEditor();
+
+        document
+          .getElementById("sidebar")
+          .classList.remove("open");
+      }
+
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key.toLowerCase() === "s"
+      ) {
+        event.preventDefault();
+
+        await saveApplicationState(
+          "Données enregistrées"
+        );
+      }
+
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === "Enter"
+      ) {
+        event.preventDefault();
+
+        const target =
+          moduleDefinition(currentView)
+            ? currentView
+            : "tasks";
+
+        openEditor(target);
+      }
+    });
+
+    async function initializeApplication() {
+      await loadApplicationState();
+
+      const hash =
+        window.location.hash.replace("#", "");
+
+      const customExists =
+        state.customModules.some(
+          (module) => module.id === hash
+        );
+
+      if (
+        BUILTIN_VIEWS.includes(hash) ||
+        customExists
+      ) {
+        currentView = hash;
+      } else {
+        currentView = "dashboard";
+        window.location.hash = "dashboard";
+      }
+
+      renderApplication();
+    }
+
+    initializeApplication();
+  </script>
+</body>
+</html>
